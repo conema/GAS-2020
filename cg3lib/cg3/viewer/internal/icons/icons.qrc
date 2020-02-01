@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>bbox.png</file>
+        <file>flat.png</file>
+        <file>points.png</file>
+        <file>smooth.png</file>
+        <file>wire.png</file>
+        <file>tcolor.png</file>
+        <file>vcolor.png</file>
+        <file>save.png</file>
+        <file>close.png</file>
+        <file>triangle_closed.png</file>
+        <file>triangle_opened.png</file>
+    </qresource>
+</RCC>

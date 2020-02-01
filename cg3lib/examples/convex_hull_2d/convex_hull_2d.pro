@@ -1,0 +1,8 @@
+CONFIG += CG3_CORE CG3_DATA_STRUCTURES CG3_ALGORITHMS CG3_MESHES CG3_VIEWER
+
+include (../../cg3.pri)
+
+HEADERS +=
+
+SOURCES += \
+    main.cpp

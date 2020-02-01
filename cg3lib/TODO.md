@@ -1,0 +1,95 @@
+# Major
+- [ ] Complete this ToDo list :sweat_smile:
+- [ ] Make the library header only (at least for modules without dependencies)
+- [ ] Create CMake configuration files in order to double support qmake and cmake
+- [ ] Improve MainWindow GUI
+- [x] Manage multiple pickable objects drawn in the Canvas
+- [ ] Unify Meshes data structures under single abstract class
+- [ ] Add a brief explanation of the content of headers containing functions (no classes)
+- [x] Support LibIGL module with MSVC
+- [ ] Geometric objects with type traits
+
+# Minor
+- Geometry
+  - [ ] Point dimension templated (merge 2D, 3D, ..., nD point in a general class)
+  - [ ] Replace Triangle area formulas with Heron's formula
+- Style
+  - [x] Naming of files which are interface to an external library: remove the name of the library (cgal)
+  - [ ] Follow the linux kernel coding style everywhere (https://www.kernel.org/doc/html/v4.10/process/coding-style.html)
+- Data Structure:
+  - [ ] BipartiteGraph inherits from Graph (is it possible?)
+  - [ ] AABBTree should manage AABB extractions in a better way (interface for AABB extraction?) and manage different types in the same AABBTree. Find a better way to use AABB struct in an efficient way in the nodes (initialization needed).
+  - [ ] RangeTree dimension as template (is it possible?), find a way to not copy all the comparators for each lower level range tree.
+  - [ ] Template of type int in RangeTree, AABBTree, Point, ... should be unsigned long long int (or size_t). Or use static_assert to check that the dimension is greater than zero.
+- Meshes:
+  - [ ] Reorganize EigenMeshAlgorithms and Dcel Algorithms
+  - [x] Put Dcel and EigenMesh under a module called Meshes
+  - [ ] Add EigenMesh member functions verticesEigenMatrix and facesEigenMatrix
+  - [ ] viewer/interfaces becomes viewer/abstract_classes
+  - [x] viewer/renderable_objects becomes viewer/opengl_objects
+  - [ ] Complete restyle Dcel
+- Viewer:
+  - [ ] GLCanvas becomes a private nested class of the MainWindow
+  - [ ] Disable "Space" event for 3D viewer
+  - [ ] Add iterators on DrawableContainer
+- CGAL:
+  - [ ] Booleans 2D: transform vector of point in container of point for polygons
+  - [ ] Voronoi 2D: insert on the diagram the inf edges (intersections with a built bounding box)
+  - [ ] Hole Filling: better output informations
+- LibIGL:
+  - [ ] Remove EigenMeshLibIGLAlgorithms class, or use only when necessary
+  - [ ] Too many files, it would be better to group them: for example "is_edge_manifold" and "is_vertex_manifold" functions can be grouped in a single file. Also "face_adjacencies", "vertex_adjacencies".
+- All
+  - [ ] Remove all "get" from member function names and make function names more "c++" like (support all old names by creating a CG3_OLD_NAMES_COMPATIBILITY and creating aliases)
+
+# To Implement
+- Algorithms:
+  - [ ] Marching Cubes
+  - [ ] Taubin Smoothing
+  - [ ] Extract SubGraph from Graphs
+  - [ ] Johnson's Algorithm for Circuit enumeraiton
+  - [ ] Hausdorff distance
+  - [ ] Best Symmetry Plane of a 3D Mesh
+- Cgal:
+  - [ ] Boolean union 2D between polygons
+  - [ ] Polyhedron to Dcel conversion
+  - [ ] SurfaceMesh to Dcel conversion
+  - [ ] SurfaceMesh from/to EigenMesh conversion
+
+# Missing Abstract Classes Inheritance
+- Data Structures:
+  - [ ] graphs/graph from SerializableObject
+  - [ ] all the trees from SerializableObject
+
+# Missing Documentation
+- Examples:
+  - [ ] Examples of usages of the classes
+  - [ ] Organize Module pages
+    - [ ] Core Module
+    - [ ] Algorithms Module
+    - [ ] CGAL Module
+    - [ ] CinoLib Module
+    - [ ] Data Structures Module
+    - [ ] Meshes Module
+    - [ ] LibIGL Module
+    - [ ] Viewer Module
+  - [ ] Write example of creation of a Manager for the mainWindow
+- Core:
+  - [ ] geometry/2d/line2d
+  - [ ] geometry/line
+  - [ ] geometry/plane
+  - [ ] geometry/segment
+  - [ ] geometry/triangle
+- Data Structures:
+  - [ ] arrays/array
+- LibIGL:
+  - [ ] connected components
+  - [ ] decimate
+  - [ ] extract manifold patches
+  - [ ] face adjacences
+  - [ ] is edge manifold
+  - [ ] is vertex manifold
+  - [ ] mesh distance
+  - [ ] remove duplicate vertices
+  - [ ] remove unreferenced vertices
+  - [ ] vertex adjacences
