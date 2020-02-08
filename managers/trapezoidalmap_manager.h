@@ -12,6 +12,8 @@
 
 #include "drawables/drawable_trapezoidalmap_dataset.h"
 
+#include "data_structures/trapezoid.h"
+
 namespace Ui {
     class TrapezoidalMapManager;
 }
@@ -57,7 +59,7 @@ private:
     //---------------------------------------------------------------------
     //Declare your attributes here
 
-
+    std::list<tg::Trapezoid> trapezoidList;
 
 
     //#####################################################################

@@ -1,0 +1,4 @@
+#ifndef FOLLOWSEGMENTS_H
+#define FOLLOWSEGMENTS_H
+
+#endif // FOLLOWSEGMENTS_H
