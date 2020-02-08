@@ -13,10 +13,10 @@ namespace tg
     class Trapezoid
     {
     public:
-        Trapezoid(const cg3::Segment2d& top,
-                  const cg3::Segment2d& bottom,
-                  const cg3::Point2d& rightp,
-                  const cg3::Point2d& leftp);
+        Trapezoid(const cg3::Segment2d top,
+                  const cg3::Segment2d bottom,
+                  const cg3::Point2d rightp,
+                  const cg3::Point2d leftp);
 
         bool operator== (const Trapezoid &value);
 
@@ -54,12 +54,12 @@ namespace tg
         /* ----- Private fields ----- */
 
         // Edges bounding the trapezoid
-        const cg3::Segment2d &top;
-        const cg3::Segment2d &bottom;
+        const cg3::Segment2d top;
+        const cg3::Segment2d bottom;
 
         // Edges points
-        const cg3::Point2d &rightp;
-        const cg3::Point2d &leftp;
+        const cg3::Point2d rightp;
+        const cg3::Point2d leftp;
 
         /*
          * Pointers because we don't know them when I initialize the trapezoids

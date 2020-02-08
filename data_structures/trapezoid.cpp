@@ -1,9 +1,9 @@
 #include "trapezoid.h"
 
-tg::Trapezoid::Trapezoid(const cg3::Segment2d& top,
-                         const cg3::Segment2d& bottom,
-                         const cg3::Point2d& rightp,
-                         const cg3::Point2d& leftp) :
+tg::Trapezoid::Trapezoid(const cg3::Segment2d top,
+                         const cg3::Segment2d bottom,
+                         const cg3::Point2d rightp,
+                         const cg3::Point2d leftp) :
     top(top),
     bottom(bottom),
     rightp(rightp),

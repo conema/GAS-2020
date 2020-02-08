@@ -37,7 +37,8 @@ TrapezoidalMapManager::TrapezoidalMapManager(QWidget *parent) :
                 cg3::Point2d(BOUNDINGBOX, BOUNDINGBOX)),
     firstPointSelectedColor(220, 80, 80),
     firstPointSelectedSize(5),
-    isFirstPointSelected(false)
+    isFirstPointSelected(false),
+    drawableTrapezoidalMap(BOUNDINGBOX)
 {
     //NOTE 1: you probably need to initialize some objects in the constructor. You
     //can see how to initialize an attribute in the lines above. This is C++ style
@@ -82,19 +83,10 @@ TrapezoidalMapManager::TrapezoidalMapManager(QWidget *parent) :
     //and re-drawing it again. See how we implemented the drawing of the bounding box and 
     //the dataset.
 
-    // Initialize Trapezoidal Map with the boundingbox trapezoid (S0)
-    cg3::Segment2d top = cg3::Segment2d(cg3::Point2d(-BOUNDINGBOX, BOUNDINGBOX), cg3::Point2d(BOUNDINGBOX, BOUNDINGBOX));
-    cg3::Segment2d bottom = cg3::Segment2d(cg3::Point2d(-BOUNDINGBOX, -BOUNDINGBOX), cg3::Point2d(BOUNDINGBOX, -BOUNDINGBOX));
-    cg3::Point2d leftp = cg3::Point2d(-BOUNDINGBOX, -BOUNDINGBOX);
-    cg3::Point2d rightp = cg3::Point2d(BOUNDINGBOX, BOUNDINGBOX);
 
-    tg::Trapezoid S0(top,
-                     bottom,
-                     rightp,
-                     leftp);
-    S0.Trapezoid::updateAdjacencies(nullptr, nullptr, nullptr, nullptr);
 
-    trapezoidList.push_back(S0);
+    mainWindow.pushDrawableObject(&drawableTrapezoidalMap, "Trapezoids");
+
 
 
     //#####################################################################
@@ -134,7 +126,7 @@ TrapezoidalMapManager::~TrapezoidalMapManager()
     //be evaluated!)
 
 
-
+     mainWindow.deleteDrawableObject(&drawableTrapezoidalMap);
 
     //#####################################################################
 
@@ -208,60 +200,8 @@ void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& seg
 	//structures, you could save directly the point (Point2d) in each trapezoid (it is fine).
 
 
+        drawableTrapezoidalMap.addSegments(segment);
 
-    if (trapezoidList.size() == 1){
-        // TODO: da cambiare
-       tg::Trapezoid oldTrapezoid = trapezoidList.front();
-
-        // For new trapezoid for the new segment
-        tg::Trapezoid A(oldTrapezoid.getTop(),
-                        oldTrapezoid.getBottom(),
-                        segment.p1(),
-                        oldTrapezoid.getLeftp());
-
-        tg::Trapezoid B(oldTrapezoid.getTop(),
-                        oldTrapezoid.getBottom(),
-                        segment.p2(),
-                        oldTrapezoid.getRightp());
-
-        tg::Trapezoid C(oldTrapezoid.getTop(),
-                        segment,
-                        segment.p1(),
-                        segment.p2());
-
-        tg::Trapezoid D(segment,
-                        oldTrapezoid.getBottom(),
-                        segment.p1(),
-                        segment.p2());
-
-        // Add adjacencies
-        A.Trapezoid::updateAdjacencies(oldTrapezoid.getLowerLeftTrapezoid(),
-                                       oldTrapezoid.getUpperLeftTrapezoid(),
-                                       &C,
-                                       &D);
-
-        B.Trapezoid::updateAdjacencies(&D,
-                                       &C,
-                                       oldTrapezoid.getUpperRightTrapezoid(),
-                                       oldTrapezoid.getLowerRightTrapezoid());
-        C.Trapezoid::updateAdjacencies(&A,
-                                       &A,
-                                       &B,
-                                       &B);
-        D.Trapezoid::updateAdjacencies(&A,
-                                       &A,
-                                       &B,
-                                       &B);
-
-        trapezoidList.remove(oldTrapezoid);
-        trapezoidList.push_front(A);
-        trapezoidList.push_front(B);
-        trapezoidList.push_front(C);
-        trapezoidList.push_front(D);
-
-        std::cout<<trapezoidList.size()<<std::endl;
-
-    }
 
     //#####################################################################
 
