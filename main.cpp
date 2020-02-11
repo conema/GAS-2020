@@ -5,6 +5,7 @@
 int main(int argc, char *argv[]) {
     CG3_SUPPRESS_WARNING(argc);
     CG3_SUPPRESS_WARNING(argv);
+    std::srand(std::time(0));
 
     QApplication app(argc, argv);
 

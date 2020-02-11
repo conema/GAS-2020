@@ -3,12 +3,17 @@
 
 #include <cg3/geometry/point2.h>
 #include <cg3/geometry/segment2.h>
+#include <cg3/utilities/color.h>
+#include <data_structures/dag/leaf.h>
+#include <algorithms/trapezoidalmap_helper.h>
+
+#define YESDEBUG false
 
 /**
- * @brief This class represent a trapezoid in the trapezoid geometry (td) namespace
+ * @brief This class represent a trapezoid
  */
 
-namespace tg
+namespace tmap
 {
     class Trapezoid
     {
@@ -49,6 +54,8 @@ namespace tg
                                const Trapezoid *upperRightTrapezoid,
                                const Trapezoid *lowerRightTrapezoid);
 
+        cg3::Color getColor() const;
+
     private:
 
         /* ----- Private fields ----- */
@@ -61,8 +68,14 @@ namespace tg
         const cg3::Point2d rightp;
         const cg3::Point2d leftp;
 
+        // Color
+        cg3::Color color;
+
+        // Pointer to DAG leaf
+        dag::Leaf *leaf;
+
         /*
-         * Pointers because we don't know them when I initialize the trapezoids
+         * Pointers because we don't know them when we initialize the trapezoids
          */
         // Upper adjacent trapezoids
         const Trapezoid *upperRightTrapezoid;

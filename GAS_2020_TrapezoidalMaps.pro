@@ -40,10 +40,15 @@ DISTFILES += \
     LICENSE
 
 SOURCES +=  \
-    algorithms/Intersection_2d_value.cpp \
+    algorithms/follow_segments.cpp \
+    algorithms/trapezoidalmap_helper.cpp \
+    data_structures/dag/dag.cpp \
+    data_structures/dag/leaf.cpp \
+    data_structures/dag/x_node.cpp \
+    data_structures/dag/y_node.cpp \
     data_structures/segment_intersection_checker.cpp \
-    data_structures/trapezoid.cpp \
-    data_structures/trapezoidalmap.cpp \
+    data_structures/tmap/trapezoid.cpp \
+    data_structures/tmap/trapezoidalmap.cpp \
     data_structures/trapezoidalmap_dataset.cpp \
     drawables/drawable_trapezoidalmap.cpp \
     drawables/drawable_trapezoidalmap_dataset.cpp \
@@ -55,10 +60,15 @@ FORMS += \
     managers/trapezoidalmapmanager.ui
 
 HEADERS += \
-    algorithms/Intersection_2d_value.h \
+    algorithms/follow_segments.h \
+    algorithms/trapezoidalmap_helper.h \
+    data_structures/dag/dag.h \
+    data_structures/dag/leaf.h \
+    data_structures/dag/x_node.h \
+    data_structures/dag/y_node.h \
     data_structures/segment_intersection_checker.h \
-    data_structures/trapezoid.h \
-    data_structures/trapezoidalmap.h \
+    data_structures/tmap/trapezoid.h \
+    data_structures/tmap/trapezoidalmap.h \
     data_structures/trapezoidalmap_dataset.h \
     drawables/drawable_trapezoidalmap.h \
     drawables/drawable_trapezoidalmap_dataset.h \

@@ -12,7 +12,7 @@
 
 #include "drawables/drawable_trapezoidalmap_dataset.h"
 
-#include "data_structures/trapezoid.h"
+#include "data_structures/tmap/trapezoid.h"
 #include "drawables/drawable_trapezoidalmap.h"
 
 namespace Ui {

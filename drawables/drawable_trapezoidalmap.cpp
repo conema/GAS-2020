@@ -8,7 +8,6 @@ DrawableTrapezoidalMap::DrawableTrapezoidalMap()
 DrawableTrapezoidalMap::DrawableTrapezoidalMap(const int &boundingbox) :
     TrapezoidalMap(boundingbox)
 {
-    srand (time(NULL));
 }
 
 void DrawableTrapezoidalMap::draw() const
@@ -17,17 +16,15 @@ void DrawableTrapezoidalMap::draw() const
 
     if (getTrapezoids().size() == 1)
         return;
-    int i = 0;
-    for (const tg::Trapezoid &trapezoid: getTrapezoids()) {
-        double randN = rand()%255;
 
-        glColor3ub(randN, randN, randN);
+    for (const tmap::Trapezoid &trapezoid: getTrapezoids()) {
+        glColor3ub(trapezoid.getColor().red(), trapezoid.getColor().green(), trapezoid.getColor().blue());
 
 
-        cg3::Point2d bottomLeftIntersection = findIntersectionPoint(trapezoid.getBottom(), trapezoid.getLeftp());
-        cg3::Point2d bottomRightIntersection = findIntersectionPoint(trapezoid.getBottom(), trapezoid.getRightp());
-        cg3::Point2d topRightIntersection = findIntersectionPoint(trapezoid.getTop(), trapezoid.getRightp());
-        cg3::Point2d topLeftIntersection = findIntersectionPoint(trapezoid.getTop(), trapezoid.getLeftp());
+        cg3::Point2d bottomLeftIntersection = tmap::findIntersectionPoint(trapezoid.getBottom(), trapezoid.getLeftp());
+        cg3::Point2d bottomRightIntersection = tmap::findIntersectionPoint(trapezoid.getBottom(), trapezoid.getRightp());
+        cg3::Point2d topRightIntersection = tmap::findIntersectionPoint(trapezoid.getTop(), trapezoid.getRightp());
+        cg3::Point2d topLeftIntersection = tmap::findIntersectionPoint(trapezoid.getTop(), trapezoid.getLeftp());
 
         glBegin(GL_POLYGON);
           glVertex2d(bottomLeftIntersection.x(), bottomLeftIntersection.y());
@@ -36,17 +33,15 @@ void DrawableTrapezoidalMap::draw() const
           glVertex2d(topLeftIntersection.x(), topLeftIntersection.y());
         glEnd();
 
-        if ( i == 2) {
-
-        glBegin(GL_POINTS);
-            glColor3ub(255, 0, 0); glVertex2d(bottomLeftIntersection.x(), bottomLeftIntersection.y());      //red
-            glColor3ub(225, 255, 0); glVertex2d(bottomRightIntersection.x(), bottomRightIntersection.y());  //yellow
-            glColor3ub(0, 247, 255); glVertex2d(topRightIntersection.x(), topRightIntersection.y());        //blue
-            glColor3ub(217, 0, 255); glVertex2d(topLeftIntersection.x(), topLeftIntersection.y());          //purple
-        glEnd();
-        }
-
-        i++;
+        #if YESDEBUG
+            // Debug point of trapezoids
+            glBegin(GL_POINTS);
+                glColor3ub(255, 0, 0); glVertex2d(bottomLeftIntersection.x(), bottomLeftIntersection.y());      //red
+                glColor3ub(225, 255, 0); glVertex2d(bottomRightIntersection.x(), bottomRightIntersection.y());  //yellow
+                glColor3ub(0, 247, 255); glVertex2d(topRightIntersection.x(), topRightIntersection.y());        //blue
+                glColor3ub(217, 0, 255); glVertex2d(topLeftIntersection.x(), topLeftIntersection.y());          //purple
+            glEnd();
+        #endif
     }
 }
 
