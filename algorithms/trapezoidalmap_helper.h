@@ -9,7 +9,6 @@
 namespace tmap{
     class Trapezoid;
 
-    void insertSegment(const cg3::Segment2d &segment);
     cg3::Point2d findIntersectionPoint(const cg3::Segment2d &s, const cg3::Point2d &p);
     cg3::Color generateColor(const cg3::Color &startColor = cg3::Color(255, 255, 255));
 }

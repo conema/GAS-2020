@@ -1,12 +1,8 @@
 #include "drawable_trapezoidalmap.h"
 
-DrawableTrapezoidalMap::DrawableTrapezoidalMap()
-{
 
-}
-
-DrawableTrapezoidalMap::DrawableTrapezoidalMap(const int &boundingbox) :
-    TrapezoidalMap(boundingbox)
+DrawableTrapezoidalMap::DrawableTrapezoidalMap(const int &boundingbox, TrapezoidalMapDataset &trapezoidalMapDataset) :
+    TrapezoidalMap(boundingbox, trapezoidalMapDataset)
 {
 }
 
@@ -17,14 +13,19 @@ void DrawableTrapezoidalMap::draw() const
     if (getTrapezoids().size() == 1)
         return;
 
-    for (const tmap::Trapezoid &trapezoid: getTrapezoids()) {
-        glColor3ub(trapezoid.getColor().red(), trapezoid.getColor().green(), trapezoid.getColor().blue());
+    for (const auto& trapezoid: getTrapezoids()) {
+        glColor3ub(trapezoid->getColor().red(), trapezoid->getColor().green(), trapezoid->getColor().blue());
 
+        const cg3::Segment2d top = trapezoidalMapDataset.getSegment(trapezoid->getTop());
+        const cg3::Segment2d bottom = trapezoidalMapDataset.getSegment(trapezoid->getBottom());
 
-        cg3::Point2d bottomLeftIntersection = tmap::findIntersectionPoint(trapezoid.getBottom(), trapezoid.getLeftp());
-        cg3::Point2d bottomRightIntersection = tmap::findIntersectionPoint(trapezoid.getBottom(), trapezoid.getRightp());
-        cg3::Point2d topRightIntersection = tmap::findIntersectionPoint(trapezoid.getTop(), trapezoid.getRightp());
-        cg3::Point2d topLeftIntersection = tmap::findIntersectionPoint(trapezoid.getTop(), trapezoid.getLeftp());
+        const cg3::Point2d leftp = trapezoidalMapDataset.getPoint(trapezoid->getLeftp());
+        const cg3::Point2d rightp = trapezoidalMapDataset.getPoint(trapezoid->getRightp());
+
+        cg3::Point2d bottomLeftIntersection = tmap::findIntersectionPoint(bottom, leftp);
+        cg3::Point2d bottomRightIntersection = tmap::findIntersectionPoint(bottom, rightp);
+        cg3::Point2d topRightIntersection = tmap::findIntersectionPoint(top, rightp);
+        cg3::Point2d topLeftIntersection = tmap::findIntersectionPoint(top, leftp);
 
         glBegin(GL_POLYGON);
           glVertex2d(bottomLeftIntersection.x(), bottomLeftIntersection.y());

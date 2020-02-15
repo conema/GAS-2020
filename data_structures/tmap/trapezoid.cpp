@@ -1,9 +1,10 @@
 #include "trapezoid.h"
 
-tmap::Trapezoid::Trapezoid(const cg3::Segment2d top,
-                         const cg3::Segment2d bottom,
-                         const cg3::Point2d rightp,
-                         const cg3::Point2d leftp):
+
+tmap::Trapezoid::Trapezoid(const size_t top,
+                         const size_t bottom,
+                         const size_t rightp,
+                         const size_t leftp):
     top(top),
     bottom(bottom),
     rightp(rightp),
@@ -16,84 +17,79 @@ tmap::Trapezoid::Trapezoid(const cg3::Segment2d top,
 /* ----- Overloading ----- */
 
 bool tmap::Trapezoid::operator== (const Trapezoid& value){
-    if (value.getTop() == getTop() &&
+    return (value.getTop() == getTop() &&
         value.getBottom() == getBottom() &&
         value.getRightp() == getRightp() &&
-        value.getLeftp() == getLeftp()) {
-
-        return true;
-    }
-
-    return false;
+        value.getLeftp() == getLeftp());
 }
 
 /* ----- Getter/Setter ----- */
 
-const cg3::Segment2d &tmap::Trapezoid::getTop() const
+const size_t &tmap::Trapezoid::getTop() const
 {
     return top;
 }
 
-const cg3::Segment2d &tmap::Trapezoid::getBottom() const
+const size_t &tmap::Trapezoid::getBottom() const
 {
     return bottom;
 }
 
-const cg3::Point2d &tmap::Trapezoid::getRightp() const
+const size_t &tmap::Trapezoid::getRightp() const
 {
     return rightp;
 }
 
-const cg3::Point2d &tmap::Trapezoid::getLeftp() const
+const size_t &tmap::Trapezoid::getLeftp() const
 {
     return leftp;
 }
 
-const tmap::Trapezoid *tmap::Trapezoid::getUpperRightTrapezoid() const
+tmap::Trapezoid* tmap::Trapezoid::getUpperRightTrapezoid() const
 {
     return upperRightTrapezoid;
 }
 
-void tmap::Trapezoid::setUpperRightTrapezoid(const Trapezoid *value)
+void tmap::Trapezoid::setUpperRightTrapezoid(Trapezoid* value)
 {
     upperRightTrapezoid = value;
 }
 
-const tmap::Trapezoid *tmap::Trapezoid::getUpperLeftTrapezoid() const
+tmap::Trapezoid* tmap::Trapezoid::getUpperLeftTrapezoid() const
 {
     return upperLeftTrapezoid;
 }
 
-void tmap::Trapezoid::setUpperLeftTrapezoid(const Trapezoid *value)
+void tmap::Trapezoid::setUpperLeftTrapezoid(Trapezoid* value)
 {
     upperLeftTrapezoid = value;
 }
 
-const tmap::Trapezoid *tmap::Trapezoid::getLowerLeftTrapezoid() const
+tmap::Trapezoid* tmap::Trapezoid::getLowerLeftTrapezoid() const
 {
     return lowerLeftTrapezoid;
 }
 
-void tmap::Trapezoid::setLowerLeftTrapezoid(const Trapezoid *value)
+void tmap::Trapezoid::setLowerLeftTrapezoid(tmap::Trapezoid* value)
 {
     lowerLeftTrapezoid = value;
 }
 
-const tmap::Trapezoid *tmap::Trapezoid::getLowerRightTrapezoid() const
+tmap::Trapezoid* tmap::Trapezoid::getLowerRightTrapezoid() const
 {
     return lowerRightTrapezoid;
 }
 
-void tmap::Trapezoid::setLowerRightTrapezoid(const tmap::Trapezoid *value)
+void tmap::Trapezoid::setLowerRightTrapezoid(tmap::Trapezoid* value)
 {
     lowerRightTrapezoid = value;
 }
 
 /* ----- Other methods ----- */
-void tmap::Trapezoid::updateAdjacencies(const tmap::Trapezoid *lowerLeftTrapezoid,
-                       const tmap::Trapezoid *upperLeftTrapezoid,
-                       const tmap::Trapezoid *upperRightTrapezoid,
-                       const tmap::Trapezoid *lowerRightTrapezoid){
+void tmap::Trapezoid::updateAdjacencies(tmap::Trapezoid* lowerLeftTrapezoid,
+                                        tmap::Trapezoid* upperLeftTrapezoid,
+                                        tmap::Trapezoid* upperRightTrapezoid,
+                                        tmap::Trapezoid* lowerRightTrapezoid){
     tmap::Trapezoid::setLowerLeftTrapezoid(lowerLeftTrapezoid);
     tmap::Trapezoid::setUpperLeftTrapezoid(upperLeftTrapezoid);
     tmap::Trapezoid::setUpperRightTrapezoid(upperRightTrapezoid);

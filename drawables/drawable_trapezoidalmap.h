@@ -16,8 +16,7 @@
 class DrawableTrapezoidalMap : public tmap::TrapezoidalMap, public cg3::DrawableObject
 {
 public:
-    DrawableTrapezoidalMap();
-    DrawableTrapezoidalMap(const int &boundingbox);
+    DrawableTrapezoidalMap(const int &boundingbox, TrapezoidalMapDataset &trapezoidalMapDataset);
 
     cg3::Point3d sceneCenter() const;
     double sceneRadius() const;

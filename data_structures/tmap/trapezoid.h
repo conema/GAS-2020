@@ -18,41 +18,41 @@ namespace tmap
     class Trapezoid
     {
     public:
-        Trapezoid(const cg3::Segment2d top,
-                  const cg3::Segment2d bottom,
-                  const cg3::Point2d rightp,
-                  const cg3::Point2d leftp);
+        Trapezoid(const size_t top,
+                  const size_t bottom,
+                  const size_t rightp,
+                  const size_t leftp);
 
         bool operator== (const Trapezoid &value);
 
-        const cg3::Segment2d &getTop() const;
-        void setTop(const cg3::Segment2d &value);
+        const size_t &getTop() const;
+        void setTop(const size_t &value);
 
-        const cg3::Segment2d &getBottom() const;
-        void setBottom(const cg3::Segment2d &value);
+        const size_t &getBottom() const;
+        void setBottom(const size_t &value);
 
-        const cg3::Point2d &getRightp() const;
-        void setRightp(const cg3::Point2d &value);
+        const size_t &getRightp() const;
+        void setRightp(const size_t &value);
 
-        const cg3::Point2d &getLeftp() const;
-        void setLeftp(const cg3::Point2d &value);
+        const size_t &getLeftp() const;
+        void setLeftp(const size_t &value);
 
-        const Trapezoid *getUpperRightTrapezoid() const;
-        void setUpperRightTrapezoid(const Trapezoid *value);
+        Trapezoid* getUpperRightTrapezoid() const;
+        void setUpperRightTrapezoid(Trapezoid* value);
 
-        const Trapezoid *getUpperLeftTrapezoid() const;
-        void setUpperLeftTrapezoid(const Trapezoid *value);
+        Trapezoid* getUpperLeftTrapezoid() const;
+        void setUpperLeftTrapezoid(Trapezoid* value);
 
-        const Trapezoid *getLowerRightTrapezoid() const;
-        void setLowerRightTrapezoid(const Trapezoid *value);
+        Trapezoid* getLowerRightTrapezoid() const;
+        void setLowerRightTrapezoid(Trapezoid* value);
 
-        const Trapezoid *getLowerLeftTrapezoid() const;
-        void setLowerLeftTrapezoid(const Trapezoid *value);
+        Trapezoid* getLowerLeftTrapezoid() const;
+        void setLowerLeftTrapezoid(Trapezoid* value);
 
-        void updateAdjacencies(const Trapezoid *lowerLeftTrapezoid,
-                               const Trapezoid *upperLeftTrapezoid,
-                               const Trapezoid *upperRightTrapezoid,
-                               const Trapezoid *lowerRightTrapezoid);
+        void updateAdjacencies(Trapezoid* lowerLeftTrapezoid,
+                               Trapezoid* upperLeftTrapezoid,
+                               Trapezoid* upperRightTrapezoid,
+                               Trapezoid* lowerRightTrapezoid);
 
         cg3::Color getColor() const;
 
@@ -61,29 +61,26 @@ namespace tmap
         /* ----- Private fields ----- */
 
         // Edges bounding the trapezoid
-        const cg3::Segment2d top;
-        const cg3::Segment2d bottom;
+        size_t top;
+        size_t bottom;
 
         // Edges points
-        const cg3::Point2d rightp;
-        const cg3::Point2d leftp;
+        size_t rightp;
+        size_t leftp;
 
         // Color
         cg3::Color color;
 
         // Pointer to DAG leaf
-        dag::Leaf *leaf;
+        //dag::Leaf *leaf;
 
-        /*
-         * Pointers because we don't know them when we initialize the trapezoids
-         */
         // Upper adjacent trapezoids
-        const Trapezoid *upperRightTrapezoid;
-        const Trapezoid *upperLeftTrapezoid;
+        Trapezoid *upperRightTrapezoid;
+        Trapezoid *upperLeftTrapezoid;
 
         // Lower adjacent trapezoids
-        const Trapezoid *lowerRightTrapezoid;
-        const Trapezoid *lowerLeftTrapezoid;
+        Trapezoid *lowerRightTrapezoid;
+        Trapezoid *lowerLeftTrapezoid;
     };
 }
 

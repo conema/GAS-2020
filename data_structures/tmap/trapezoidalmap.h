@@ -5,28 +5,36 @@
 #include <cg3/geometry/segment2.h>
 #include <data_structures/tmap/trapezoid.h>
 #include <cg3/geometry/bounding_box2.h>
+#include <data_structures/trapezoidalmap_dataset.h>
 
 namespace tmap
 {
     class TrapezoidalMap
     {
     public:
-        typedef std::list<tmap::Trapezoid> Trapezoids;
+        typedef std::unordered_set<tmap::Trapezoid*> Trapezoids;
 
-        TrapezoidalMap();
-        TrapezoidalMap(const int &boundingbox);
+        TrapezoidalMap(const int &boundingbox, TrapezoidalMapDataset &trapezoidalMapDataset);
+        ~TrapezoidalMap();
 
-        static void addTrapezoid(const tmap::Trapezoid trapezoid);
-        static void removeTrapezoid(const tmap::Trapezoid &trapezoid);
-        static const tmap::Trapezoid& firstTrapezoid();
+        void addTrapezoid(tmap::Trapezoid *trapezoid);
+        void removeTrapezoid(tmap::Trapezoid *trapezoid);
+        const tmap::Trapezoid& firstTrapezoid() const;
 
         const cg3::BoundingBox2& getBoundingBox() const;
-        static const Trapezoids& getTrapezoids();
+        const Trapezoids& getTrapezoids() const;
+
+        void insertSegment(const cg3::Segment2d &segment);
+
 
     private:
-        static Trapezoids trapezoids;
+        // To store all the trapezoids
+        Trapezoids trapezoids;
 
         cg3::BoundingBox2 boundingBox;
+    protected:
+        // To get a reference to points/segments
+        TrapezoidalMapDataset &trapezoidalMapDataset;
     };
 }
 
