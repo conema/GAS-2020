@@ -96,7 +96,7 @@ void tmap::Trapezoid::updateAdjacencies(tmap::Trapezoid* lowerLeftTrapezoid,
     tmap::Trapezoid::setLowerRightTrapezoid(lowerRightTrapezoid);
 }
 
-cg3::Color tmap::Trapezoid::getColor() const
+const cg3::Color tmap::Trapezoid::getColor() const
 {
     return color;
 }

@@ -44,6 +44,7 @@ SOURCES +=  \
     algorithms/trapezoidalmap_helper.cpp \
     data_structures/dag/dag.cpp \
     data_structures/dag/leaf.cpp \
+    data_structures/dag/node.cpp \
     data_structures/dag/x_node.cpp \
     data_structures/dag/y_node.cpp \
     data_structures/segment_intersection_checker.cpp \
@@ -64,6 +65,7 @@ HEADERS += \
     algorithms/trapezoidalmap_helper.h \
     data_structures/dag/dag.h \
     data_structures/dag/leaf.h \
+    data_structures/dag/node.h \
     data_structures/dag/x_node.h \
     data_structures/dag/y_node.h \
     data_structures/segment_intersection_checker.h \
