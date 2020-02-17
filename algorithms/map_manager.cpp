@@ -4,8 +4,9 @@
  * @brief Insert a new segment into the TrapezoidalMap and the DAG
  * @param[in] segment: segment
  */
-void tmap::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trapezoidalMap, TrapezoidalMapDataset &trapezoidalMapDataset)
+void tmap::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trapezoidalMap, TrapezoidalMapDataset &trapezoidalMapDataset, dag::Dag &dag)
 {
+    /* -----  TrapezoidalMap building  -----  */
     // TODO: da cambiare
     tmap::Trapezoid *oldTrapezoid = *trapezoidalMap.getTrapezoids().begin();
 
@@ -64,4 +65,33 @@ void tmap::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trapezo
     trapezoidalMap.addTrapezoid(B);
     trapezoidalMap.addTrapezoid(C);
     trapezoidalMap.addTrapezoid(D);
+
+    /* ----- DAG nodes building -----  */
+    //Creatore x-nodes and y-nodes
+    dag::XNode *pi = new dag::XNode(leftMostId);
+    dag::XNode *qi = new dag::XNode(rightMostId);
+    dag::YNode *si = new dag::YNode(segmentId);
+
+    // Create leaves with trapezoids
+    dag::Leaf *Al = new dag::Leaf(A);
+    dag::Leaf *Bl = new dag::Leaf(B);
+    dag::Leaf *Cl = new dag::Leaf(C);
+    dag::Leaf *Dl = new dag::Leaf(D);
+
+    pi->setLeftChild(Al);
+    pi->setRightChild(pi);
+
+    qi->setLeftChild(si);
+    qi->setRightChild(Bl);
+
+    si->setLeftChild(Cl);
+    si->setRightChild(Dl);
+
+    // Link between trapezoids and leaves
+    A->setLeaf(Al);
+    B->setLeaf(Bl);
+    C->setLeaf(Cl);
+    D->setLeaf(Dl);
+
+    dag.setRoot(pi);
 }

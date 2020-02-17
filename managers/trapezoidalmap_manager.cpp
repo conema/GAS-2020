@@ -38,7 +38,8 @@ TrapezoidalMapManager::TrapezoidalMapManager(QWidget *parent) :
     firstPointSelectedColor(220, 80, 80),
     firstPointSelectedSize(5),
     isFirstPointSelected(false),
-    drawableTrapezoidalMap(BOUNDINGBOX, drawableTrapezoidalMapDataset)
+    drawableTrapezoidalMap(BOUNDINGBOX, drawableTrapezoidalMapDataset),
+    dag(new dag::Leaf(*drawableTrapezoidalMap.getTrapezoids().begin()))
 {
     //NOTE 1: you probably need to initialize some objects in the constructor. You
     //can see how to initialize an attribute in the lines above. This is C++ style
@@ -200,7 +201,9 @@ void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& seg
 	//structures, you could save directly the point (Point2d) in each trapezoid (it is fine).
 
 
-    tmap::buildMap(segment, drawableTrapezoidalMap, drawableTrapezoidalMapDataset);
+    tmap::buildMap(segment, drawableTrapezoidalMap, drawableTrapezoidalMapDataset, dag);
+
+    dag::Leaf *l = reinterpret_cast<dag::Leaf*>(dag.getRoot()->getLeftChild());
 
 
     //#####################################################################

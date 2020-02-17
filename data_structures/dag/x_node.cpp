@@ -1,6 +1,7 @@
 #include "x_node.h"
 
-dag::x_node::x_node(size_t &pointId):
+dag::XNode::XNode(const size_t &pointId):
+    Node(dag::NodeType::XNODE),
     pointId(pointId)
 {
 

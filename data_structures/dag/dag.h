@@ -3,19 +3,25 @@
 
 
 #include <cg3/geometry/segment2.h>
+#include <data_structures/tmap/trapezoid.h>
 #include "node.h"
+#include "leaf.h"
 
 namespace dag
 {
 
-    class dag
+    class Dag
     {
     public:
-        dag();
+        Dag(Leaf *node);
 
-        void addSegment(const cg3::Segment2d &segment);
+        //Node* findNode(const Node &node);
+        void setRoot(Node *value);
+
+        Node *getRoot() const;
+
     private:
-        Node root;
+        Node *root;
 
         //void removeLeaf(Leaf &leaf);
     };

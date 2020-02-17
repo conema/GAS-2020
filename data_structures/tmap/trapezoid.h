@@ -56,6 +56,9 @@ namespace tmap
 
         const cg3::Color getColor() const;
 
+        dag::Leaf *getLeaf() const;
+        void setLeaf(dag::Leaf *value);
+
     private:
 
         /* ----- Private fields ----- */

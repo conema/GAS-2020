@@ -12,12 +12,16 @@ namespace dag
     class Node
     {
     public:
-        Node();
+        Node(dag::NodeType nodeType);
+
         Node *getRightChild() const;
         void setRightChild(Node *value);
 
         Node *getLeftChild() const;
         void setLeftChild(Node *value);
+
+        NodeType getNodeType() const;
+        void setNodeType(const NodeType &value);
 
     private:
         Node *rightChild;

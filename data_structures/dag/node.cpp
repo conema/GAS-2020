@@ -1,6 +1,9 @@
 #include "node.h"
 
-dag::Node::Node()
+dag::Node::Node(dag::NodeType nodeType):
+    rightChild(nullptr),
+    leftChild(nullptr),
+    nodeType(nodeType)
 {
 
 }
@@ -23,4 +26,14 @@ dag::Node *dag::Node::getLeftChild() const
 void dag::Node::setLeftChild(Node *value)
 {
     leftChild = value;
+}
+
+dag::NodeType dag::Node::getNodeType() const
+{
+    return nodeType;
+}
+
+void dag::Node::setNodeType(const NodeType &value)
+{
+    nodeType = value;
 }

@@ -1,6 +1,7 @@
 #include "y_node.h"
 
-dag::y_node::y_node(size_t &segmentId):
+dag::YNode::YNode(const size_t &segmentId):
+    Node(dag::NodeType::YNODE),
     segmentId(segmentId)
 {
 

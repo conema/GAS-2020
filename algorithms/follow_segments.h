@@ -7,7 +7,7 @@
 #include <cg3/geometry/segment2.h>
 
 std::list<tmap::Trapezoid> followSegment(tmap::TrapezoidalMap &trapezoidalMap,
-                                         dag::dag &dag,
+                                         dag::Dag &dag,
                                          cg3::Segment2d &segment);
 
 #endif // FOLLOW_SEGMENTS_H

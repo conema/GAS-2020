@@ -6,10 +6,10 @@
 
 namespace dag
 {
-    class x_node: public Node
+    class XNode: public Node
     {
     public:
-        x_node(size_t &pointId);
+        XNode(const size_t &pointId);
 
 
     private:

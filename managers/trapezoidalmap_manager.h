@@ -62,6 +62,7 @@ private:
     //Declare your attributes here
 
     DrawableTrapezoidalMap drawableTrapezoidalMap;
+    dag::Dag dag;
 
     //#####################################################################
 
