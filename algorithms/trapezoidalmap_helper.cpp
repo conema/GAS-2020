@@ -16,7 +16,7 @@ cg3::Point2d tmap::findIntersectionPoint(const cg3::Segment2d &s, const cg3::Poi
 
 /**
  * @brief Generate a random pastel color
- * @param[in] startColor
+ * @param[in] startColor: base color to start generation
  * @return random color
  */
 cg3::Color tmap::generateColor(const cg3::Color &startColor){

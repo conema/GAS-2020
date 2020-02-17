@@ -23,10 +23,6 @@ namespace tmap
 
         const cg3::BoundingBox2& getBoundingBox() const;
         const Trapezoids& getTrapezoids() const;
-
-        void insertSegment(const cg3::Segment2d &segment);
-
-
     private:
         // To store all the trapezoids
         Trapezoids trapezoids;

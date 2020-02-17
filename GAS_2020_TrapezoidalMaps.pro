@@ -41,6 +41,7 @@ DISTFILES += \
 
 SOURCES +=  \
     algorithms/follow_segments.cpp \
+    algorithms/map_manager.cpp \
     algorithms/trapezoidalmap_helper.cpp \
     data_structures/dag/dag.cpp \
     data_structures/dag/leaf.cpp \
@@ -62,6 +63,7 @@ FORMS += \
 
 HEADERS += \
     algorithms/follow_segments.h \
+    algorithms/map_manager.h \
     algorithms/trapezoidalmap_helper.h \
     data_structures/dag/dag.h \
     data_structures/dag/leaf.h \

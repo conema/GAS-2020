@@ -12,6 +12,7 @@
 
 #include "drawables/drawable_trapezoidalmap_dataset.h"
 
+#include <algorithms/map_manager.h>
 #include "data_structures/tmap/trapezoid.h"
 #include "drawables/drawable_trapezoidalmap.h"
 

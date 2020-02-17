@@ -11,6 +11,6 @@ void addSegment(const cg3::Segment2d &segment){
 
 }
 
-void removeLeaf(dag::Leaf &leaf){
+/*void removeLeaf(dag::Leaf &leaf){
 
-}
+}*/

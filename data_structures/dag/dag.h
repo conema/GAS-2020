@@ -1,9 +1,9 @@
 #ifndef DAG_H
 #define DAG_H
 
-#include "x_node.h"
+
 #include <cg3/geometry/segment2.h>
-#include "leaf.h"
+#include "node.h"
 
 namespace dag
 {
@@ -15,9 +15,9 @@ namespace dag
 
         void addSegment(const cg3::Segment2d &segment);
     private:
-        x_node root;
+        Node root;
 
-        void removeLeaf(Leaf &leaf);
+        //void removeLeaf(Leaf &leaf);
     };
 }
 
