@@ -12,6 +12,8 @@ namespace dag
         XNode(const size_t &pointId);
 
 
+        size_t getPointId() const;
+
     private:
         const size_t pointId;
     };

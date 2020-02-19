@@ -6,3 +6,8 @@ dag::XNode::XNode(const size_t &pointId):
 {
 
 }
+
+size_t dag::XNode::getPointId() const
+{
+    return pointId;
+}

@@ -40,7 +40,6 @@ DISTFILES += \
     LICENSE
 
 SOURCES +=  \
-    algorithms/follow_segments.cpp \
     algorithms/map_manager.cpp \
     algorithms/trapezoidalmap_helper.cpp \
     data_structures/dag/dag.cpp \
@@ -62,7 +61,6 @@ FORMS += \
     managers/trapezoidalmapmanager.ui
 
 HEADERS += \
-    algorithms/follow_segments.h \
     algorithms/map_manager.h \
     algorithms/trapezoidalmap_helper.h \
     data_structures/dag/dag.h \

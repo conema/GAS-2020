@@ -32,3 +32,13 @@ cg3::Color tmap::generateColor(const cg3::Color &startColor){
     return cg3::Color(red, green, blue);
 }
 
+/**
+ * @brief Find if a points lies on the left or on the right of a segment
+ * @param[in] s: the segment
+ * @param[in] p: the point
+ * @return true if point is at the left, otherwise false
+ */
+bool tmap::findPointSide(const cg3::Segment2d &s, const cg3::Point2d &p)
+{
+    return (s.p2().x() - s.p1().x()) * (p.y() - s.p1().y()) - (s.p2().y() - s.p1().y()) * (p.x() - s.p1().x()) > 0;
+}

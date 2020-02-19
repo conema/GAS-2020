@@ -15,6 +15,8 @@ namespace tmap
         typedef std::unordered_set<tmap::Trapezoid*> Trapezoids;
 
         TrapezoidalMap(const int &boundingbox, TrapezoidalMapDataset &trapezoidalMapDataset);
+        TrapezoidalMap(const TrapezoidalMap&) = delete;
+        TrapezoidalMap& operator=(const TrapezoidalMap&) = delete;
         ~TrapezoidalMap();
 
         void addTrapezoid(tmap::Trapezoid *trapezoid);

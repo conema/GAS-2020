@@ -200,10 +200,11 @@ void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& seg
     //efficient in memory. However, depending on how you implement your algorithms and data 
 	//structures, you could save directly the point (Point2d) in each trapezoid (it is fine).
 
+    std::vector<tmap::Trapezoid*> tl = tbuild::followSegment(dag, segment, drawableTrapezoidalMapDataset);
 
-    tmap::buildMap(segment, drawableTrapezoidalMap, drawableTrapezoidalMapDataset, dag);
+    tbuild::buildMap(segment, drawableTrapezoidalMap, drawableTrapezoidalMapDataset, dag);
 
-    dag::Leaf *l = reinterpret_cast<dag::Leaf*>(dag.getRoot()->getLeftChild());
+    //dag::Leaf *l = reinterpret_cast<dag::Leaf*>(dag.getRoot()->getLeftChild());
 
 
     //#####################################################################

@@ -4,7 +4,7 @@
  * @brief Insert a new segment into the TrapezoidalMap and the DAG
  * @param[in] segment: segment
  */
-void tmap::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trapezoidalMap, TrapezoidalMapDataset &trapezoidalMapDataset, dag::Dag &dag)
+void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trapezoidalMap, TrapezoidalMapDataset &trapezoidalMapDataset, dag::Dag &dag)
 {
     /* -----  TrapezoidalMap building  -----  */
     // TODO: da cambiare
@@ -79,7 +79,7 @@ void tmap::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trapezo
     dag::Leaf *Dl = new dag::Leaf(D);
 
     pi->setLeftChild(Al);
-    pi->setRightChild(pi);
+    pi->setRightChild(qi);
 
     qi->setLeftChild(si);
     qi->setRightChild(Bl);
@@ -94,4 +94,41 @@ void tmap::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trapezo
     D->setLeaf(Dl);
 
     dag.setRoot(pi);
+}
+
+/**
+ * @brief Find the list of trapezoids intersected by a segment
+ * @param[in] trapezoidalMap
+ * @param[in] dag
+ * @param[in] segment
+ * @return a set of intersected trapezoids
+ */
+std::vector<tmap::Trapezoid*> tbuild::followSegment(const dag::Dag &dag,
+                                            const cg3::Segment2d &segment,
+                                            TrapezoidalMapDataset &trapezoidalMapDataset)
+{
+    bool found = false;
+    std::vector<tmap::Trapezoid*> trapezoidList;
+    int j = 0;
+
+    // Get trapezoid from DAG
+    dag::Leaf *l = dag.findPoint(dag.getRoot(), trapezoidalMapDataset, trapezoidalMapDataset.findPoint(segment.p1(), found));
+    tmap::Trapezoid *trapezoid = l->getTrapezoid();
+
+    trapezoidList.push_back(trapezoid);
+
+    // If segment.p2 lies to the right of rightp
+    while (segment.p2().x() > trapezoidalMapDataset.getPoint(trapezoidList[j]->getRightp()).x()) {
+
+        // If rightp lies above the segment
+        if (tmap::findPointSide(segment, trapezoidalMapDataset.getPoint(trapezoidList[j]->getRightp()).x())){
+            trapezoidList.push_back(trapezoidList[j]->getLowerRightTrapezoid());
+        } else {
+            trapezoidList.push_back(trapezoidList[j]->getUpperRightTrapezoid());
+        }
+
+        j++;
+    }
+
+    return trapezoidList;
 }
