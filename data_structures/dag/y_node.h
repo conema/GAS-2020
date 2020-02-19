@@ -2,15 +2,18 @@
 #define Y_NODE_H
 
 #include <cg3/geometry/segment2.h>
+#include "node.h"
 
 namespace dag
 {
-    class y_node
+    class YNode : public Node
     {
     public:
-        y_node();
+        YNode(const size_t &segmentId);
+        size_t getSegmentId() const;
+
     private:
-        const cg3::Segment2d segment;
+        const size_t segmentId;
     };
 }
 

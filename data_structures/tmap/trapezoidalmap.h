@@ -15,6 +15,8 @@ namespace tmap
         typedef std::unordered_set<tmap::Trapezoid*> Trapezoids;
 
         TrapezoidalMap(const int &boundingbox, TrapezoidalMapDataset &trapezoidalMapDataset);
+        TrapezoidalMap(const TrapezoidalMap&) = delete;
+        TrapezoidalMap& operator=(const TrapezoidalMap&) = delete;
         ~TrapezoidalMap();
 
         void addTrapezoid(tmap::Trapezoid *trapezoid);
@@ -23,10 +25,6 @@ namespace tmap
 
         const cg3::BoundingBox2& getBoundingBox() const;
         const Trapezoids& getTrapezoids() const;
-
-        void insertSegment(const cg3::Segment2d &segment);
-
-
     private:
         // To store all the trapezoids
         Trapezoids trapezoids;

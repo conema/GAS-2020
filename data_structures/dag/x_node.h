@@ -2,18 +2,20 @@
 #define X_NODE_H
 
 #include <cg3/geometry/point2.h>
+#include "node.h"
 
 namespace dag
 {
-    class x_node
+    class XNode: public Node
     {
     public:
-        x_node();
+        XNode(const size_t &pointId);
 
+
+        size_t getPointId() const;
 
     private:
-        const cg3::Point2d point;
-
+        const size_t pointId;
     };
 }
 

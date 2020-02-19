@@ -1,23 +1,49 @@
 #ifndef DAG_H
 #define DAG_H
 
-#include "x_node.h"
+
 #include <cg3/geometry/segment2.h>
+#include <cg3/geometry/point2.h>
+#include <data_structures/tmap/trapezoid.h>
+#include <data_structures/trapezoidalmap_dataset.h>
+#include <algorithms/trapezoidalmap_helper.h>
+#include "node.h"
 #include "leaf.h"
+#include "x_node.h"
+#include "y_node.h"
 
 namespace dag
 {
 
-    class dag
+    class Dag
     {
     public:
-        dag();
+        Dag(Leaf *node);
+        Dag(Node *node);
+        Dag(const Dag& dag);
+        Dag& operator = (Dag other);
+        Dag& operator = (Dag&& other);
+        Dag(Dag&& in);
+        ~Dag();
 
-        void addSegment(const cg3::Segment2d &segment);
+        void swap(Dag& other);
+
+        Leaf* findPoint(Node *node,
+                       const TrapezoidalMapDataset &trapezoidalMapDataset,
+                       const size_t &pointId) const;
+        void setRoot(Node *value);
+
+        Node *getRoot() const;
+
+        Leaf* getLeaf(Node *node) const;
+        XNode* getXNode(Node *node) const;
+        YNode* getYNode(Node *node) const;
+
     private:
-        x_node root;
+        Node *root;
+        void deleteGraph(Node *node);
 
-        void removeLeaf(Leaf &leaf);
+        //void removeLeaf(Leaf &leaf);
     };
 }
 

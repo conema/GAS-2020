@@ -96,7 +96,17 @@ void tmap::Trapezoid::updateAdjacencies(tmap::Trapezoid* lowerLeftTrapezoid,
     tmap::Trapezoid::setLowerRightTrapezoid(lowerRightTrapezoid);
 }
 
-cg3::Color tmap::Trapezoid::getColor() const
+const cg3::Color tmap::Trapezoid::getColor() const
 {
     return color;
+}
+
+dag::Leaf *tmap::Trapezoid::getLeaf() const
+{
+    return leaf;
+}
+
+void tmap::Trapezoid::setLeaf(dag::Leaf *value)
+{
+    leaf = value;
 }

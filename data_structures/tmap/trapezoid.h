@@ -54,7 +54,10 @@ namespace tmap
                                Trapezoid* upperRightTrapezoid,
                                Trapezoid* lowerRightTrapezoid);
 
-        cg3::Color getColor() const;
+        const cg3::Color getColor() const;
+
+        dag::Leaf *getLeaf() const;
+        void setLeaf(dag::Leaf *value);
 
     private:
 
@@ -69,10 +72,10 @@ namespace tmap
         size_t leftp;
 
         // Color
-        cg3::Color color;
+        const cg3::Color color;
 
         // Pointer to DAG leaf
-        //dag::Leaf *leaf;
+        dag::Leaf *leaf;
 
         // Upper adjacent trapezoids
         Trapezoid *upperRightTrapezoid;
