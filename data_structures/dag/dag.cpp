@@ -99,6 +99,12 @@ void dag::Dag::deleteGraph(Node *node)
     node = nullptr;
 }
 
+/**
+ * @brief Find a point into a trapezoid
+ * @param[in] *node: pointer to a node
+ * @param[in] *trapezoidalMapDataset: the trapezoidal map dataset to find points and segments
+ * @param[in] pointId: the point id to search
+ */
 dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoidalMapDataset, const size_t &pointId) const
 {
     switch (node->getNodeType())
@@ -123,6 +129,7 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoi
             const cg3::Segment2d &nodeSegment = trapezoidalMapDataset.getSegment(getYNode(node)->getSegmentId());
             const cg3::Point2d &searchPoint = trapezoidalMapDataset.getPoint(pointId);
 
+            // Test if the point is on the left or on the right of nodePoint
             if(tmap::findPointSide(nodeSegment, searchPoint)){
                 return findPoint(node->getLeftChild(), trapezoidalMapDataset, pointId);
             } else {

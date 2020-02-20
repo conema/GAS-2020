@@ -14,20 +14,14 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
         dag.initializeDag(new dag::Leaf(*trapezoidalMap.getTrapezoids().begin()));
     }
 
-    //Find trapezoid intersected by the new segment
+    // Find trapezoid intersected by the new segment
     std::vector<tmap::Trapezoid*> tl = tbuild::followSegment(dag, segment, trapezoidalMapDataset);
 
-    cg3::Point2d leftMost;
-    cg3::Point2d rightMost;
+    cg3::Point2d leftMost = segment.p1();
+    cg3::Point2d rightMost = segment.p2();
 
     // Re-order the segment points, p1 leftmost and p2 rightmost 
-    if (segment.p1().x() > segment.p2().x()){
-         leftMost = segment.p1();
-         rightMost = segment.p2();
-    } else {
-        leftMost = segment.p2();
-        rightMost = segment.p1();
-    }
+    tmap::orderPoint(leftMost, rightMost);
 
     bool success;
 
@@ -79,7 +73,6 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                                        B,
                                        B);
 
-        trapezoidalMap.removeTrapezoid(trapezoid);
         trapezoidalMap.addTrapezoid(A);
         trapezoidalMap.addTrapezoid(B);
         trapezoidalMap.addTrapezoid(C);
@@ -97,14 +90,42 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
         dag::Leaf *Cl = new dag::Leaf(C);
         dag::Leaf *Dl = new dag::Leaf(D);
 
+        // Find node on the DAG
+        dag::Node *foundNode = trapezoid->getLeaf();
+
+        // Find if findNode is a left or right child
+        std::unordered_set<dag::Node*> findNodeFathers = foundNode->getFathers();
+
+        if (findNodeFathers.size() == 0){
+            // The foundNode is the root and it's substituted with si
+            dag.setRoot(pi);
+        }else {
+            for (const auto& father: findNodeFathers){
+                if (father->getLeftChild() == foundNode){
+                    // The foundNode is a left child
+                    father->setLeftChild(pi);
+                } else {
+                    // The foundNode is a right child
+                    father->setRightChild(pi);
+                }
+            }
+        }
+        Al->getFathers().insert(pi);
+        Bl->getFathers().insert(qi);
+        Cl->getFathers().insert(si);
+        Dl->getFathers().insert(si);
+
         pi->setLeftChild(Al);
         pi->setRightChild(qi);
+        pi->getFathers() = foundNode->getFathers();
 
         qi->setLeftChild(si);
         qi->setRightChild(Bl);
+        qi->getFathers().insert(pi);
 
         si->setLeftChild(Cl);
         si->setRightChild(Dl);
+        si->getFathers().insert(qi);
 
         // Link between trapezoids and leaves
         A->setLeaf(Al);
@@ -112,7 +133,8 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
         C->setLeaf(Cl);
         D->setLeaf(Dl);
 
-        dag.setRoot(pi);
+        trapezoidalMap.removeTrapezoid(trapezoid);
+        delete foundNode;
     }
 }
 
@@ -131,14 +153,20 @@ std::vector<tmap::Trapezoid*> tbuild::followSegment(const dag::Dag &dag,
     std::vector<tmap::Trapezoid*> trapezoidList;
     int j = 0;
 
+    cg3::Point2d leftMost = segment.p1();
+    cg3::Point2d rightMost = segment.p2();
+
+    // Re-order the segment points, p1 leftmost and p2 rightmost
+    tmap::orderPoint(leftMost, rightMost);
+
     // Get trapezoid from DAG
-    dag::Leaf *l = dag.findPoint(dag.getRoot(), trapezoidalMapDataset, trapezoidalMapDataset.findPoint(segment.p1(), found));
+    dag::Leaf *l = dag.findPoint(dag.getRoot(), trapezoidalMapDataset, trapezoidalMapDataset.findPoint(leftMost, found));
     tmap::Trapezoid *trapezoid = l->getTrapezoid();
 
     trapezoidList.push_back(trapezoid);
 
     // If segment.p2 lies to the right of rightp
-    while (segment.p2().x() > trapezoidalMapDataset.getPoint(trapezoidList[j]->getRightp()).x()) {
+    while (rightMost.x() > trapezoidalMapDataset.getPoint(trapezoidList[j]->getRightp()).x()) {
 
         // If rightp lies above the segment
         if (tmap::findPointSide(segment, trapezoidalMapDataset.getPoint(trapezoidList[j]->getRightp()).x())){

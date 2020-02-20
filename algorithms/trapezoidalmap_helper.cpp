@@ -40,5 +40,35 @@ cg3::Color tmap::generateColor(const cg3::Color &startColor){
  */
 bool tmap::findPointSide(const cg3::Segment2d &s, const cg3::Point2d &p)
 {
-    return (s.p2().x() - s.p1().x()) * (p.y() - s.p1().y()) - (s.p2().y() - s.p1().y()) * (p.x() - s.p1().x()) > 0;
+    cg3::Point2d p1 = s.p1();
+    cg3::Point2d p2 = s.p2();
+
+    tmap::orderPoint(p1, p2);
+
+    return (p2.x() - p1.x()) * (p.y() - p1.y()) - (p2.y() - p1.y()) * (p.x() - p1.x()) > 0;
+}
+
+/**
+ * @brief Return true if the slope of a segment is positive
+ * @param[in] p1
+ * @param[in] p2
+ * @return true if the the slope is positive, else otherwise
+ */
+bool tmap::findSlope(const cg3::Point2d &p1, const cg3::Point2d &p2)
+{
+    //return (((p2.y()-p1.y())/(p2.x()-p1.x())) > 0);
+    return p2.x()>p1.x();
+}
+
+/**
+ * @brief Order two point
+ * @param[in] p1
+ * @param[in] p2
+ * @return p1 will contain the leftmost point and p2 will containt the righmost
+ */
+void tmap::orderPoint(cg3::Point2d &p1, cg3::Point2d &p2)
+{
+    if (!findSlope(p1, p2)){
+        std::swap(p2, p1);
+   }
 }

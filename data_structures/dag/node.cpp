@@ -37,3 +37,8 @@ void dag::Node::setNodeType(const NodeType &value)
 {
     nodeType = value;
 }
+
+std::unordered_set<dag::Node *>& dag::Node::getFathers()
+{
+    return fathers;
+}
