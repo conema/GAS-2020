@@ -1,5 +1,11 @@
 #include "dag.h"
 
+dag::Dag::Dag():
+    root(nullptr)
+{
+
+}
+
 dag::Dag::Dag(dag::Leaf *node):
     root(node)
 {
@@ -16,6 +22,12 @@ dag::Dag::~Dag()
     deleteGraph(root);
 }
 
+void dag::Dag::initializeDag(dag::Leaf *node)
+{
+    node->getTrapezoid()->setLeaf(node);
+    root = node;
+}
+
 void dag::Dag::swap(dag::Dag &other)
 {
     using std::swap;
@@ -27,11 +39,11 @@ dag::Dag::Dag(const dag::Dag &dag)
     root = new Node(*(dag.root));
 }
 
-dag::Dag &dag::Dag::operator =(dag::Dag other)
+/*dag::Dag &dag::Dag::operator =(dag::Dag other)
 {
     swap(other);
     return *this;
-}
+}*/
 
 dag::Dag &dag::Dag::operator =(dag::Dag &&other)
 {

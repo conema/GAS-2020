@@ -2,8 +2,16 @@
 
 
 DrawableTrapezoidalMap::DrawableTrapezoidalMap(const int &boundingbox, TrapezoidalMapDataset &trapezoidalMapDataset) :
-    TrapezoidalMap(boundingbox, trapezoidalMapDataset)
+    TrapezoidalMap(boundingbox),
+    trapezoidalMapDataset(trapezoidalMapDataset)
 {
+}
+
+
+DrawableTrapezoidalMap &DrawableTrapezoidalMap::operator =(DrawableTrapezoidalMap other){
+    trapezoidalMapDataset = other.trapezoidalMapDataset;
+
+    return *this;
 }
 
 void DrawableTrapezoidalMap::draw() const

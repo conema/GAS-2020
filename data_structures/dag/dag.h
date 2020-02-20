@@ -18,13 +18,16 @@ namespace dag
     class Dag
     {
     public:
+        Dag();
         Dag(Leaf *node);
         Dag(Node *node);
         Dag(const Dag& dag);
-        Dag& operator = (Dag other);
+        //Dag& operator = (Dag other);
         Dag& operator = (Dag&& other);
         Dag(Dag&& in);
         ~Dag();
+
+        void initializeDag(Leaf *node);
 
         void swap(Dag& other);
 
@@ -39,9 +42,11 @@ namespace dag
         XNode* getXNode(Node *node) const;
         YNode* getYNode(Node *node) const;
 
+
+        void deleteGraph(Node *node);
+
     private:
         Node *root;
-        void deleteGraph(Node *node);
 
         //void removeLeaf(Leaf &leaf);
     };

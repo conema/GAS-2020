@@ -39,7 +39,7 @@ TrapezoidalMapManager::TrapezoidalMapManager(QWidget *parent) :
     firstPointSelectedSize(5),
     isFirstPointSelected(false),
     drawableTrapezoidalMap(BOUNDINGBOX, drawableTrapezoidalMapDataset),
-    dag(new dag::Leaf(*drawableTrapezoidalMap.getTrapezoids().begin()))
+    dag()
 {
     //NOTE 1: you probably need to initialize some objects in the constructor. You
     //can see how to initialize an attribute in the lines above. This is C++ style
@@ -200,11 +200,7 @@ void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& seg
     //efficient in memory. However, depending on how you implement your algorithms and data 
 	//structures, you could save directly the point (Point2d) in each trapezoid (it is fine).
 
-    std::vector<tmap::Trapezoid*> tl = tbuild::followSegment(dag, segment, drawableTrapezoidalMapDataset);
-
     tbuild::buildMap(segment, drawableTrapezoidalMap, drawableTrapezoidalMapDataset, dag);
-
-    //dag::Leaf *l = reinterpret_cast<dag::Leaf*>(dag.getRoot()->getLeftChild());
 
 
     //#####################################################################
@@ -282,6 +278,8 @@ void TrapezoidalMapManager::clearTrapezoidalMap()
     //Clear here your trapezoidal map data structure.
 
 
+    dag.deleteGraph(dag.getRoot());
+    drawableTrapezoidalMap.removeTrapezoids();
 
     //#####################################################################
 }

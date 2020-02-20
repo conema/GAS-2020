@@ -1,10 +1,21 @@
 #include "trapezoidalmap.h"
 
 
-tmap::TrapezoidalMap::TrapezoidalMap(const int &boundingbox, TrapezoidalMapDataset &trapezoidalMapDataset):
-    boundingBox(cg3::Point2d(-boundingbox, -boundingbox), cg3::Point2d(boundingbox,boundingbox)),
-    trapezoidalMapDataset(trapezoidalMapDataset)
+tmap::TrapezoidalMap::TrapezoidalMap(const int &boundingbox):
+    boundingBox(cg3::Point2d(-boundingbox, -boundingbox), cg3::Point2d(boundingbox,boundingbox))
 {
+
+
+}
+
+tmap::TrapezoidalMap::~TrapezoidalMap()
+{
+    removeTrapezoids();
+}
+
+void tmap::TrapezoidalMap::initializeTrapezoids(TrapezoidalMapDataset &trapezoidalMapDataset)
+{
+    const int &boundingbox = getBoundingBox().lengthX()/2;
 
     cg3::Point2d leftp = cg3::Point2d(-boundingbox, -boundingbox);
     cg3::Point2d rightp = cg3::Point2d(boundingbox, boundingbox);
@@ -35,13 +46,6 @@ tmap::TrapezoidalMap::TrapezoidalMap(const int &boundingbox, TrapezoidalMapDatas
     addTrapezoid(S0);
 }
 
-tmap::TrapezoidalMap::~TrapezoidalMap()
-{
-    for (const auto& trapezoid: trapezoids) {
-        delete trapezoid;
-    }
-}
-
 void tmap::TrapezoidalMap::addTrapezoid(tmap::Trapezoid *trapezoid)
 {
     trapezoids.insert(trapezoid);
@@ -61,4 +65,13 @@ const cg3::BoundingBox2& tmap::TrapezoidalMap::getBoundingBox() const
 const tmap::TrapezoidalMap::Trapezoids &tmap::TrapezoidalMap::getTrapezoids() const
 {
     return trapezoids;
+}
+
+void tmap::TrapezoidalMap::removeTrapezoids()
+{
+    for (const auto& trapezoid: trapezoids) {
+        delete trapezoid;
+    }
+
+    trapezoids.clear();
 }

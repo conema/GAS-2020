@@ -14,10 +14,12 @@ namespace tmap
     public:
         typedef std::unordered_set<tmap::Trapezoid*> Trapezoids;
 
-        TrapezoidalMap(const int &boundingbox, TrapezoidalMapDataset &trapezoidalMapDataset);
-        TrapezoidalMap(const TrapezoidalMap&) = delete;
-        TrapezoidalMap& operator=(const TrapezoidalMap&) = delete;
+        TrapezoidalMap(const int &boundingbox);
+        //TrapezoidalMap(const TrapezoidalMap&) = delete;
+        //TrapezoidalMap& operator=(const TrapezoidalMap&) = delete;
         ~TrapezoidalMap();
+
+        void initializeTrapezoids(TrapezoidalMapDataset &trapezoidalMapDataset);
 
         void addTrapezoid(tmap::Trapezoid *trapezoid);
         void removeTrapezoid(tmap::Trapezoid *trapezoid);
@@ -25,14 +27,14 @@ namespace tmap
 
         const cg3::BoundingBox2& getBoundingBox() const;
         const Trapezoids& getTrapezoids() const;
+
+        void removeTrapezoids();
     private:
         // To store all the trapezoids
         Trapezoids trapezoids;
 
+        // The trapezoidmap occupy all the external boundingbox
         cg3::BoundingBox2 boundingBox;
-    protected:
-        // To get a reference to points/segments
-        TrapezoidalMapDataset &trapezoidalMapDataset;
     };
 }
 
