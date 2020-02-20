@@ -279,6 +279,7 @@ void TrapezoidalMapManager::clearTrapezoidalMap()
 
 
     dag.deleteGraph(dag.getRoot());
+    dag.setRoot(nullptr);
     drawableTrapezoidalMap.removeTrapezoids();
 
     //#####################################################################
