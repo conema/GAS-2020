@@ -6,8 +6,6 @@
  */
 void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trapezoidalMap, TrapezoidalMapDataset &trapezoidalMapDataset, dag::Dag &dag)
 {
-    /* -----  TrapezoidalMap building  -----  */
-
     // Initialize trapezoidalmap and dag, it cannot be done in the constructor because in the manager, the dataset is deleted after the map
     if (trapezoidalMap.getTrapezoids().size() == 0){
         trapezoidalMap.initializeTrapezoids(trapezoidalMapDataset);
@@ -20,7 +18,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
     cg3::Point2d leftMost = segment.p1();
     cg3::Point2d rightMost = segment.p2();
 
-    // Re-order the segment points, p1 leftmost and p2 rightmost 
+    // Re-order the segment points, p1 leftmost and p2 rightmost
     tmap::orderPoint(leftMost, rightMost);
 
     bool success;
@@ -29,49 +27,71 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
     const size_t rightMostId = trapezoidalMapDataset.findPoint(rightMost, success);
     const size_t segmentId = trapezoidalMapDataset.findSegment(segment, success);
 
-    // 1 trapezoid intersected
     if (tl.size() == 1) {
+        // 1 trapezoid intersected
         tmap::Trapezoid *trapezoid = *tl.begin();
 
-        // For new trapezoid for the new segment
+        /* -----  TrapezoidalMap building  -----  */
+        // 4 new trapezoids for the segment
         tmap::Trapezoid *A = new tmap::Trapezoid(trapezoid->getTop(),
-                          trapezoid->getBottom(),
-                          leftMostId,
-                          trapezoid->getLeftp());
+                                                 trapezoid->getBottom(),
+                                                 leftMostId,
+                                                 trapezoid->getLeftp());
 
         tmap::Trapezoid *B = new tmap::Trapezoid(trapezoid->getTop(),
-                          trapezoid->getBottom(),
-                          trapezoid->getRightp(),
-                          rightMostId);
+                                                 trapezoid->getBottom(),
+                                                 trapezoid->getRightp(),
+                                                 rightMostId);
 
         tmap::Trapezoid *C = new tmap::Trapezoid(trapezoid->getTop(),
-                          segmentId,
-                          rightMostId,
-                          leftMostId);
+                                                 segmentId,
+                                                 rightMostId,
+                                                 leftMostId);
 
         tmap::Trapezoid *D = new tmap::Trapezoid(segmentId,
-                          trapezoid->getBottom(),
-                          rightMostId,
-                          leftMostId);
+                                                 trapezoid->getBottom(),
+                                                 rightMostId,
+                                                 leftMostId);
 
         // Add adjacencies
         A->Trapezoid::updateAdjacencies(trapezoid->getLowerLeftTrapezoid(),
-                                       trapezoid->getUpperLeftTrapezoid(),
-                                       C,
-                                       D);
+                                        trapezoid->getUpperLeftTrapezoid(),
+                                        C,
+                                        D);
 
         B->Trapezoid::updateAdjacencies(D,
-                                       C,
-                                       trapezoid->getUpperRightTrapezoid(),
-                                       trapezoid->getLowerRightTrapezoid());
+                                        C,
+                                        trapezoid->getUpperRightTrapezoid(),
+                                        trapezoid->getLowerRightTrapezoid());
         C->Trapezoid::updateAdjacencies(A,
-                                       A,
-                                       B,
-                                       B);
+                                        A,
+                                        B,
+                                        B);
         D->Trapezoid::updateAdjacencies(A,
-                                       A,
-                                       B,
-                                       B);
+                                        A,
+                                        B,
+                                        B);
+
+        // Update neighbors' neighbors
+        if (trapezoid->getLowerLeftTrapezoid() != nullptr){
+            trapezoid->getLowerLeftTrapezoid()->setLowerRightTrapezoid(A);
+            trapezoid->getLowerLeftTrapezoid()->setUpperRightTrapezoid(A);
+        }
+
+        if (trapezoid->getUpperLeftTrapezoid() != nullptr){
+            trapezoid->getUpperLeftTrapezoid()->setLowerRightTrapezoid(A);
+            trapezoid->getUpperLeftTrapezoid()->setUpperRightTrapezoid(A);
+        }
+
+        if (trapezoid->getUpperRightTrapezoid() != nullptr){
+            trapezoid->getUpperRightTrapezoid()->setLowerLeftTrapezoid(B);
+            trapezoid->getUpperRightTrapezoid()->setUpperLeftTrapezoid(B);
+        }
+
+        if (trapezoid->getLowerRightTrapezoid() != nullptr){
+            trapezoid->getLowerRightTrapezoid()->setLowerLeftTrapezoid(B);
+            trapezoid->getLowerRightTrapezoid()->setUpperLeftTrapezoid(B);
+        }
 
         trapezoidalMap.addTrapezoid(A);
         trapezoidalMap.addTrapezoid(B);
@@ -135,6 +155,110 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
         trapezoidalMap.removeTrapezoid(trapezoid);
         delete foundNode;
+    } else {
+        // >1 Trapezoid intersected
+
+        tmap::Trapezoid *trapezoidFirstEndpoint = *tl.begin();
+        tmap::Trapezoid *trapezoidSecondEndpoint = tl.back();
+
+        /* -----  TrapezoidalMap building  -----  */
+        // 3 new trapezoids for the left endpoint of the segment
+        // Left trapezoid
+        tmap::Trapezoid *A1 = new tmap::Trapezoid(trapezoidFirstEndpoint->getTop(),
+                                                 trapezoidFirstEndpoint->getBottom(),
+                                                 leftMostId,
+                                                 trapezoidFirstEndpoint->getLeftp());
+
+        // Top trapezoid
+        tmap::Trapezoid *B1 = new tmap::Trapezoid(trapezoidFirstEndpoint->getTop(),
+                                                 segmentId,
+                                                 trapezoidFirstEndpoint->getRightp(),
+                                                 leftMostId);
+
+        // Bottom trapezoid
+        tmap::Trapezoid *C1 = new tmap::Trapezoid(segmentId,
+                                                 trapezoidFirstEndpoint->getBottom(),
+                                                 trapezoidFirstEndpoint->getRightp(),
+                                                 leftMostId );
+
+        // Add adjacencies
+        A1->Trapezoid::updateAdjacencies(trapezoidFirstEndpoint->getLowerLeftTrapezoid(),
+                                        trapezoidFirstEndpoint->getUpperLeftTrapezoid(),
+                                        B1,
+                                        C1);
+
+        B1->Trapezoid::updateAdjacencies(A1,
+                                        A1,
+                                        trapezoidFirstEndpoint->getUpperRightTrapezoid(),
+                                        trapezoidFirstEndpoint->getUpperRightTrapezoid());
+
+        C1->Trapezoid::updateAdjacencies(A1,
+                                        A1,
+                                        trapezoidFirstEndpoint->getLowerRightTrapezoid(),
+                                        trapezoidFirstEndpoint->getLowerRightTrapezoid());
+
+        // Update neighbors' neighbors
+        if (trapezoidFirstEndpoint->getLowerLeftTrapezoid() != nullptr){
+            trapezoidFirstEndpoint->getLowerRightTrapezoid()->setLowerLeftTrapezoid(A1);
+            trapezoidFirstEndpoint->getLowerRightTrapezoid()->setUpperLeftTrapezoid(A1);
+        }
+
+        /*if (trapezoidFirstEndpoint->getLowerRightTrapezoid() != nullptr){
+            trapezoidFirstEndpoint->getLowerLeftTrapezoid()->setLowerLeftTrapezoid(A1);
+            trapezoidFirstEndpoint->getLowerLeftTrapezoid()->setUpperLeftTrapezoid(A1);
+        }*/
+
+
+        // 3 new trapezoids for the right endpoint of the segment
+        // Top trapezoid
+        tmap::Trapezoid *A2 = new tmap::Trapezoid(trapezoidSecondEndpoint->getTop(),
+                                                 segmentId,
+                                                 rightMostId,
+                                                 trapezoidSecondEndpoint->getLeftp());
+
+        // Right trapezoid
+        tmap::Trapezoid *B2 = new tmap::Trapezoid(trapezoidSecondEndpoint->getTop(),
+                                                 trapezoidSecondEndpoint->getBottom(),
+                                                 trapezoidSecondEndpoint->getRightp(),
+                                                 rightMostId);
+
+        // Bottom trapezoid
+        tmap::Trapezoid *C2 = new tmap::Trapezoid(segmentId,
+                                                 trapezoidSecondEndpoint->getBottom(),
+                                                 rightMostId,
+                                                 trapezoidSecondEndpoint->getLeftp());
+
+
+
+        A2->Trapezoid::updateAdjacencies(B1,
+                                        trapezoidSecondEndpoint->getUpperLeftTrapezoid(),
+                                        B2,
+                                        B2);
+
+        B2->Trapezoid::updateAdjacencies(A2,
+                                        C2,
+                                        trapezoidSecondEndpoint->getUpperRightTrapezoid(),
+                                        trapezoidSecondEndpoint->getLowerRightTrapezoid());
+
+        C2->Trapezoid::updateAdjacencies(C1,
+                                        C1,
+                                        B2,
+                                        B2);
+
+
+        trapezoidalMap.addTrapezoid(A1);
+        trapezoidalMap.addTrapezoid(B1);
+        trapezoidalMap.addTrapezoid(C1);
+        trapezoidalMap.addTrapezoid(A2);
+        trapezoidalMap.addTrapezoid(B2);
+        trapezoidalMap.addTrapezoid(C2);
+
+        for (tmap::Trapezoid* trapezoid: tl){
+            trapezoidalMap.removeTrapezoid(trapezoid);
+        }
+
+
+        /* ----- DAG nodes building -----  */
     }
 }
 
@@ -146,8 +270,8 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
  * @return a set of intersected trapezoids
  */
 std::vector<tmap::Trapezoid*> tbuild::followSegment(const dag::Dag &dag,
-                                            const cg3::Segment2d &segment,
-                                            TrapezoidalMapDataset &trapezoidalMapDataset)
+                                                    const cg3::Segment2d &segment,
+                                                    TrapezoidalMapDataset &trapezoidalMapDataset)
 {
     bool found = false;
     std::vector<tmap::Trapezoid*> trapezoidList;
