@@ -189,25 +189,65 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
         B1->Trapezoid::updateAdjacencies(A1,
                                         A1,
-                                        trapezoidFirstEndpoint->getUpperRightTrapezoid(),
-                                        trapezoidFirstEndpoint->getUpperRightTrapezoid());
+                                        nullptr,
+                                        nullptr);
 
         C1->Trapezoid::updateAdjacencies(A1,
                                         A1,
-                                        trapezoidFirstEndpoint->getLowerRightTrapezoid(),
-                                        trapezoidFirstEndpoint->getLowerRightTrapezoid());
+                                        nullptr,
+                                        nullptr);
 
         // Update neighbors' neighbors
         if (trapezoidFirstEndpoint->getLowerLeftTrapezoid() != nullptr){
-            trapezoidFirstEndpoint->getLowerRightTrapezoid()->setLowerLeftTrapezoid(A1);
-            trapezoidFirstEndpoint->getLowerRightTrapezoid()->setUpperLeftTrapezoid(A1);
+            trapezoidFirstEndpoint->getLowerLeftTrapezoid()->setLowerRightTrapezoid(A1);
+            trapezoidFirstEndpoint->getLowerLeftTrapezoid()->setUpperRightTrapezoid(A1);
         }
 
-        /*if (trapezoidFirstEndpoint->getLowerRightTrapezoid() != nullptr){
-            trapezoidFirstEndpoint->getLowerLeftTrapezoid()->setLowerLeftTrapezoid(A1);
-            trapezoidFirstEndpoint->getLowerLeftTrapezoid()->setUpperLeftTrapezoid(A1);
-        }*/
+        if (trapezoidFirstEndpoint->getUpperLeftTrapezoid() != nullptr){
+            trapezoidFirstEndpoint->getUpperLeftTrapezoid()->setLowerRightTrapezoid(A1);
+            trapezoidFirstEndpoint->getUpperLeftTrapezoid()->setUpperRightTrapezoid(A1);
+        }
 
+        trapezoidalMap.removeTrapezoid(trapezoidFirstEndpoint);
+
+        trapezoidalMap.addTrapezoid(A1);
+        trapezoidalMap.addTrapezoid(B1);
+        trapezoidalMap.addTrapezoid(C1);
+
+        // Other trapezoid in the middle of the segment from t1+1 to tn-1
+        tmap::Trapezoid *oldUpper = B1;
+        tmap::Trapezoid *oldLower = C1;
+
+        for (auto it = tl.begin()+1; it != tl.end()-1; ++it){
+            tmap::Trapezoid* A3 = new tmap::Trapezoid((*it)->getTop(),
+                                                      segmentId,
+                                                      (*it)->getRightp(),
+                                                      (*it)->getLeftp());
+
+            tmap::Trapezoid* B3 = new tmap::Trapezoid(segmentId,
+                                                      (*it)->getBottom(),
+                                                      (*it)->getRightp(),
+                                                      (*it)->getLeftp());
+
+
+
+            A3->Trapezoid::updateAdjacencies(oldUpper, oldUpper, nullptr, nullptr);
+            B3->Trapezoid::updateAdjacencies(oldLower, oldLower, nullptr, nullptr);
+
+            oldUpper->setUpperRightTrapezoid(A3);
+            oldUpper->setLowerRightTrapezoid(A3);
+
+            oldLower->setUpperRightTrapezoid(B3);
+            oldLower->setLowerRightTrapezoid(B3);
+
+            oldUpper = A3;
+            oldLower = B3;
+
+            trapezoidalMap.addTrapezoid(A3);
+            trapezoidalMap.addTrapezoid(B3);
+
+            trapezoidalMap.removeTrapezoid(*it);
+        }
 
         // 3 new trapezoids for the right endpoint of the segment
         // Top trapezoid
@@ -230,8 +270,8 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
 
 
-        A2->Trapezoid::updateAdjacencies(B1,
-                                        trapezoidSecondEndpoint->getUpperLeftTrapezoid(),
+        A2->Trapezoid::updateAdjacencies(oldUpper,
+                                        oldUpper,
                                         B2,
                                         B2);
 
@@ -240,22 +280,33 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                                         trapezoidSecondEndpoint->getUpperRightTrapezoid(),
                                         trapezoidSecondEndpoint->getLowerRightTrapezoid());
 
-        C2->Trapezoid::updateAdjacencies(C1,
-                                        C1,
+        C2->Trapezoid::updateAdjacencies(oldLower,
+                                        oldLower,
                                         B2,
                                         B2);
 
+        oldUpper->setUpperRightTrapezoid(A2);
+        oldUpper->setLowerRightTrapezoid(A2);
 
-        trapezoidalMap.addTrapezoid(A1);
-        trapezoidalMap.addTrapezoid(B1);
-        trapezoidalMap.addTrapezoid(C1);
+        oldLower->setUpperRightTrapezoid(C2);
+        oldLower->setLowerRightTrapezoid(C2);
+
+        // Update neighbors' neighbors
+        if (trapezoidSecondEndpoint->getLowerRightTrapezoid() != nullptr){
+            trapezoidSecondEndpoint->getLowerRightTrapezoid()->setLowerLeftTrapezoid(B2);
+            trapezoidSecondEndpoint->getLowerRightTrapezoid()->setUpperLeftTrapezoid(B2);
+        }
+
+        if (trapezoidSecondEndpoint->getUpperRightTrapezoid() != nullptr){
+            trapezoidSecondEndpoint->getUpperRightTrapezoid()->setLowerLeftTrapezoid(B2);
+            trapezoidSecondEndpoint->getUpperRightTrapezoid()->setUpperLeftTrapezoid(B2);
+        }
+
         trapezoidalMap.addTrapezoid(A2);
         trapezoidalMap.addTrapezoid(B2);
         trapezoidalMap.addTrapezoid(C2);
 
-        for (tmap::Trapezoid* trapezoid: tl){
-            trapezoidalMap.removeTrapezoid(trapezoid);
-        }
+        trapezoidalMap.removeTrapezoid(trapezoidSecondEndpoint);
 
 
         /* ----- DAG nodes building -----  */

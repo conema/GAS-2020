@@ -1,6 +1,11 @@
 #include "trapezoid.h"
 
 
+tmap::Trapezoid::Trapezoid()
+{
+
+}
+
 tmap::Trapezoid::Trapezoid(const size_t top,
                          const size_t bottom,
                          const size_t rightp,

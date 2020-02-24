@@ -18,6 +18,7 @@ namespace tmap
     class Trapezoid
     {
     public:
+        Trapezoid();
         Trapezoid(const size_t top,
                   const size_t bottom,
                   const size_t rightp,
