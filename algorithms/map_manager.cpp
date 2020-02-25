@@ -324,7 +324,6 @@ std::vector<tmap::Trapezoid*> tbuild::followSegment(const dag::Dag &dag,
                                                     const cg3::Segment2d &segment,
                                                     TrapezoidalMapDataset &trapezoidalMapDataset)
 {
-    bool found = false;
     std::vector<tmap::Trapezoid*> trapezoidList;
     int j = 0;
 
@@ -335,7 +334,7 @@ std::vector<tmap::Trapezoid*> tbuild::followSegment(const dag::Dag &dag,
     tmap::orderPoint(leftMost, rightMost);
 
     // Get trapezoid from DAG
-    dag::Leaf *l = dag.findPoint(dag.getRoot(), trapezoidalMapDataset, trapezoidalMapDataset.findPoint(leftMost, found));
+    dag::Leaf *l = dag.findPoint(dag.getRoot(), trapezoidalMapDataset, leftMost);
     tmap::Trapezoid *trapezoid = l->getTrapezoid();
 
     trapezoidList.push_back(trapezoid);

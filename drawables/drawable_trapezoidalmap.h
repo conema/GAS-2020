@@ -22,8 +22,14 @@ public:
     cg3::Point3d sceneCenter() const;
     double sceneRadius() const;
     void draw() const;
+
+    tmap::Trapezoid *getHighlightedTrapezoid() const;
+    void setHighlightedTrapezoid(tmap::Trapezoid *value);
+
 private:
     TrapezoidalMapDataset &trapezoidalMapDataset;
+
+    tmap::Trapezoid* highlightedTrapezoid;
 };
 
 #endif // DRAWABLETRAPEZOIDALMAP_H

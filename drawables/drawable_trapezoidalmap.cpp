@@ -22,7 +22,11 @@ void DrawableTrapezoidalMap::draw() const
         return;
 
     for (const auto& trapezoid: getTrapezoids()) {
-        glColor3ub(trapezoid->getColor().red(), trapezoid->getColor().green(), trapezoid->getColor().blue());
+        if (trapezoid == getHighlightedTrapezoid()){
+            glColor3ub(0, 0, 255);
+        } else {
+            glColor3ub(trapezoid->getColor().red(), trapezoid->getColor().green(), trapezoid->getColor().blue());
+        }
 
         const cg3::Segment2d top = trapezoidalMapDataset.getSegment(trapezoid->getTop());
         const cg3::Segment2d bottom = trapezoidalMapDataset.getSegment(trapezoid->getBottom());
@@ -52,6 +56,16 @@ void DrawableTrapezoidalMap::draw() const
             glEnd();
         #endif
     }
+}
+
+tmap::Trapezoid *DrawableTrapezoidalMap::getHighlightedTrapezoid() const
+{
+    return highlightedTrapezoid;
+}
+
+void DrawableTrapezoidalMap::setHighlightedTrapezoid(tmap::Trapezoid *value)
+{
+    highlightedTrapezoid = value;
 }
 
 cg3::Point3d DrawableTrapezoidalMap::sceneCenter() const

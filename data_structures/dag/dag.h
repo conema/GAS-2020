@@ -33,7 +33,7 @@ namespace dag
 
         Leaf* findPoint(Node *node,
                        const TrapezoidalMapDataset &trapezoidalMapDataset,
-                       const size_t &pointId) const;
+                       const cg3::Point2d &point) const;
         void setRoot(Node *value);
 
         Node *getRoot() const;

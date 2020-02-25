@@ -256,17 +256,15 @@ void TrapezoidalMapManager::queryTrapezoidalMap(const cg3::Point2d& queryPoint)
     //the output trapezoid in the canvas (DrawableTrapezoidMap should implement the method
     //to do that).
 
+    // Get trapezoid from dag and highlighten it on the drawable map
+    dag::Leaf* leafTrapezoid = dag.findPoint(dag.getRoot(), drawableTrapezoidalMapDataset, queryPoint);
 
-
-
+    // It can be null if someone try to query the empty map with no trapezoids
+    if (leafTrapezoid != nullptr){
+        drawableTrapezoidalMap.setHighlightedTrapezoid(leafTrapezoid->getTrapezoid());
+    }
 
     //#####################################################################
-
-
-
-    //You can delete this line after you implement the algorithm: it is
-    //just needed to suppress the unused-variable warning
-    CG3_SUPPRESS_WARNING(queryPoint);
 }
 
 /**
@@ -281,6 +279,7 @@ void TrapezoidalMapManager::clearTrapezoidalMap()
     dag.deleteGraph(dag.getRoot());
     dag.setRoot(nullptr);
     drawableTrapezoidalMap.removeTrapezoids();
+    drawableTrapezoidalMap.setHighlightedTrapezoid(nullptr);
 
     //#####################################################################
 }

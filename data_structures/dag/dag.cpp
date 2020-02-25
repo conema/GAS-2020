@@ -105,8 +105,12 @@ void dag::Dag::deleteGraph(Node *node)
  * @param[in] *trapezoidalMapDataset: the trapezoidal map dataset to find points and segments
  * @param[in] pointId: the point id to search
  */
-dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoidalMapDataset, const size_t &pointId) const
+dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoidalMapDataset, const cg3::Point2d &point) const
 {
+    if (node == nullptr){
+        return nullptr;
+    }
+
     switch (node->getNodeType())
     {
         case dag::NodeType::LEAF:
@@ -114,26 +118,24 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoi
         case dag::NodeType::XNODE:
         {
             const cg3::Point2d &nodePoint = trapezoidalMapDataset.getPoint(getXNode(node)->getPointId());
-            const cg3::Point2d &searchPoint = trapezoidalMapDataset.getPoint(pointId);
 
             // Test if the point is on the left or on the right of nodePoint
-            if (nodePoint.x() > searchPoint.x()){
-                return findPoint(node->getLeftChild(), trapezoidalMapDataset, pointId);
+            if (nodePoint.x() > point.x()){
+                return findPoint(node->getLeftChild(), trapezoidalMapDataset, point);
             } else {
-                return findPoint(node->getRightChild(), trapezoidalMapDataset, pointId);
+                return findPoint(node->getRightChild(), trapezoidalMapDataset, point);
             }
             break;
         }
         case dag::NodeType::YNODE:
         {
             const cg3::Segment2d &nodeSegment = trapezoidalMapDataset.getSegment(getYNode(node)->getSegmentId());
-            const cg3::Point2d &searchPoint = trapezoidalMapDataset.getPoint(pointId);
 
             // Test if the point is on the left or on the right of nodePoint
-            if(tmap::findPointSide(nodeSegment, searchPoint)){
-                return findPoint(node->getLeftChild(), trapezoidalMapDataset, pointId);
+            if(tmap::findPointSide(nodeSegment, point)){
+                return findPoint(node->getLeftChild(), trapezoidalMapDataset, point);
             } else {
-                return findPoint(node->getRightChild(), trapezoidalMapDataset, pointId);
+                return findPoint(node->getRightChild(), trapezoidalMapDataset, point);
             }
         }
     }
