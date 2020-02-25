@@ -29,6 +29,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
     if (tl.size() == 1) {
         // 1 trapezoid intersected
+
         tmap::Trapezoid *trapezoid = *tl.begin();
 
         /* -----  TrapezoidalMap building  -----  */
@@ -214,7 +215,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
         trapezoidalMap.addTrapezoid(B1);
         trapezoidalMap.addTrapezoid(C1);
 
-        // Other trapezoid in the middle of the segment from t1+1 to tn-1
+        // Other trapezoid in the middle of the segment from tl(1+1) to tl(n-1)
         tmap::Trapezoid *oldUpper = B1;
         tmap::Trapezoid *oldLower = C1;
 

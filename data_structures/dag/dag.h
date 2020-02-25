@@ -34,21 +34,18 @@ namespace dag
         Leaf* findPoint(Node *node,
                        const TrapezoidalMapDataset &trapezoidalMapDataset,
                        const cg3::Point2d &point) const;
-        void setRoot(Node *value);
 
+        void setRoot(Node *value);
         Node *getRoot() const;
 
         Leaf* getLeaf(Node *node) const;
         XNode* getXNode(Node *node) const;
         YNode* getYNode(Node *node) const;
 
-
         void deleteGraph(Node *node);
 
     private:
         Node *root;
-
-        //void removeLeaf(Leaf &leaf);
     };
 }
 
