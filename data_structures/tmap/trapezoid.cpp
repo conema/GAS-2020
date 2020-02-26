@@ -45,6 +45,11 @@ const size_t &tmap::Trapezoid::getRightp() const
     return rightp;
 }
 
+void tmap::Trapezoid::setRightp(const size_t &value)
+{
+    rightp = value;
+}
+
 const size_t &tmap::Trapezoid::getLeftp() const
 {
     return leftp;

@@ -3,7 +3,8 @@
 
 DrawableTrapezoidalMap::DrawableTrapezoidalMap(const int &boundingbox, TrapezoidalMapDataset &trapezoidalMapDataset) :
     TrapezoidalMap(boundingbox),
-    trapezoidalMapDataset(trapezoidalMapDataset)
+    trapezoidalMapDataset(trapezoidalMapDataset),
+    highlightedTrapezoid(nullptr)
 {
 }
 
@@ -22,7 +23,7 @@ void DrawableTrapezoidalMap::draw() const
         return;
 
     for (const auto& trapezoid: getTrapezoids()) {
-        if (trapezoid == getHighlightedTrapezoid()){
+        if (trapezoid != nullptr && trapezoid == getHighlightedTrapezoid()){
             glColor3ub(0, 0, 255);
         } else {
             glColor3ub(trapezoid->getColor().red(), trapezoid->getColor().green(), trapezoid->getColor().blue());
