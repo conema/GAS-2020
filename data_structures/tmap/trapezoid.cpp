@@ -14,7 +14,8 @@ tmap::Trapezoid::Trapezoid(const size_t top,
     bottom(bottom),
     rightp(rightp),
     leftp(leftp),
-    color(generateColor())
+    color(generateColor()),
+    leaf(nullptr)
 {
 
 }

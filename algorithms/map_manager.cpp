@@ -216,20 +216,22 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
         yNode1->setLeftChild(B1l);
         yNode1->setRightChild(C1l);
 
-        // Find the node in the DAG and replace it with the new xNode
+        A1->setLeaf(A1l);
+        B1->setLeaf(B1l);
+        C1->setLeaf(C1l);
 
-        // TODO: refactoring con funzione
+        // Find the node in the DAG and replace it with the new xNode
         dag::Leaf *deleteLeaf = trapezoidFirstEndpoint->getLeaf();
 
         dag.updateChildren(deleteLeaf, xNode1);
 
 
-        xNode1->getFathers().insert(*deleteLeaf->getFathers().begin());
+        xNode1->getFathers() = deleteLeaf->getFathers();
         yNode1->getFathers().insert(xNode1);
-        C1l->getFathers().insert(xNode1);
 
-        A1l->getFathers().insert(yNode1);
+        A1l->getFathers().insert(xNode1);
         B1l->getFathers().insert(yNode1);
+        C1l->getFathers().insert(yNode1);
 
         delete deleteLeaf;
         trapezoidalMap.removeTrapezoid(trapezoidFirstEndpoint);
@@ -325,10 +327,21 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                 trapezoidalMap.addTrapezoid(B3);
             }
 
+            dag::Leaf *A3l;
+            dag::Leaf *B3l;
 
+            // Create a new DAG leaf only if the trapezoid is not already inserted
+            if (A3->getLeaf() == nullptr){
+                A3l = new dag::Leaf(A3);
+            } else {
+                A3l = A3->getLeaf();
+            }
 
-            dag::Leaf *A3l = new dag::Leaf(A3);
-            dag::Leaf *B3l = new dag::Leaf(B3);
+            if (B3->getLeaf() == nullptr){
+                B3l = new dag::Leaf(B3);
+            } else {
+                B3l = B3->getLeaf();
+            }
 
             dag::YNode *yNode3 = new dag::YNode(segmentId);
             yNode3->setRightChild(B3l);
@@ -338,8 +351,12 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
             dag.updateChildren(deleteLeaf2, yNode3);
 
+            yNode3->getFathers() = deleteLeaf2->getFathers();
             A3l->getFathers().insert(yNode3);
             B3l->getFathers().insert(yNode3);
+
+            A3->setLeaf(A3l);
+            B3->setLeaf(B3l);
 
             delete deleteLeaf2;
 
@@ -397,11 +414,6 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                                              B2,
                                              B2);
 
-            B2->Trapezoid::updateAdjacencies(A2,
-                                            C2,
-                                            trapezoidSecondEndpoint->getUpperRightTrapezoid(),
-                                            trapezoidSecondEndpoint->getLowerRightTrapezoid());
-
             C2->Trapezoid::updateAdjacencies(C2->getLowerLeftTrapezoid(),
                                              C2->getUpperLeftTrapezoid(),
                                              B2,
@@ -443,6 +455,11 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
             oldLower->setLowerRightTrapezoid(C2);
         }
 
+        B2->Trapezoid::updateAdjacencies(A2,
+                                        C2,
+                                        trapezoidSecondEndpoint->getUpperRightTrapezoid(),
+                                        trapezoidSecondEndpoint->getLowerRightTrapezoid());
+
         trapezoidalMap.addTrapezoid(B2);
 
 
@@ -477,13 +494,16 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
         // Find where deleteLeaf3 is a child and substitute it
         dag.updateChildren(deleteLeaf3, xNode2);
 
-        xNode2->getFathers().insert(*deleteLeaf3->getFathers().begin());
+        xNode2->getFathers() = deleteLeaf3->getFathers();
         yNode2->getFathers().insert(xNode2);
-        C2l->getFathers().insert(xNode2);
 
         A2l->getFathers().insert(yNode2);
-        B2l->getFathers().insert(yNode2);
+        B2l->getFathers().insert(xNode2);
+        C2l->getFathers().insert(yNode2);
 
+        A2->setLeaf(A2l);
+        B2->setLeaf(B2l);
+        C2->setLeaf(C2l);
 
         delete deleteLeaf3;
         trapezoidalMap.removeTrapezoid(trapezoidSecondEndpoint);

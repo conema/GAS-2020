@@ -95,7 +95,11 @@ void dag::Dag::deleteGraph(Node *node)
     deleteGraph(node->getLeftChild());
     deleteGraph(node->getRightChild());
 
+    Node copyNode = *node;
+
     delete node;
+
+    updateChildren(&copyNode, nullptr);
     node = nullptr;
 }
 
@@ -103,7 +107,7 @@ void dag::Dag::deleteGraph(Node *node)
  * @brief Find a point into a trapezoid
  * @param[in] *node: pointer to a node
  * @param[in] *trapezoidalMapDataset: the trapezoidal map dataset to find points and segments
- * @param[in] pointId: the point id to search
+ * @param[in] pointId: the point to search
  */
 dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoidalMapDataset, const cg3::Point2d &point) const
 {
@@ -143,7 +147,6 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoi
     // Never reachable
     return nullptr;
 }
-
 
 /**
  * @brief Update the children
