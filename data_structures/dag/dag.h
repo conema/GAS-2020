@@ -44,6 +44,7 @@ namespace dag
 
         void deleteGraph(Node *node);
 
+        void updateChildren(Node* oldChildren, Node* newChildren);
     private:
         Node *root;
     };

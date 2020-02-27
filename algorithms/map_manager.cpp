@@ -114,22 +114,12 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
         // Find node on the DAG
         dag::Node *foundNode = trapezoid->getLeaf();
 
-        // Find if findNode is a left or right child
-        std::unordered_set<dag::Node*> findNodeFathers = foundNode->getFathers();
-
-        if (findNodeFathers.size() == 0){
+        if (foundNode->getFathers().size() == 0){
             // The foundNode is the root and it's substituted with si
             dag.setRoot(pi);
         }else {
-            for (const auto& father: findNodeFathers){
-                if (father->getLeftChild() == foundNode){
-                    // The foundNode is a left child
-                    father->setLeftChild(pi);
-                } else {
-                    // The foundNode is a right child
-                    father->setRightChild(pi);
-                }
-            }
+            // Update the children of the father of foundNode
+            dag.updateChildren(foundNode, pi);
         }
         Al->getFathers().insert(pi);
         Bl->getFathers().insert(qi);
@@ -230,15 +220,11 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
         // TODO: refactoring con funzione
         dag::Leaf *deleteLeaf = trapezoidFirstEndpoint->getLeaf();
-        dag::Node *father = *deleteLeaf->getFathers().begin();
 
-        if (father->getLeftChild() == deleteLeaf){
-            father->setLeftChild(xNode1);
-        } else if (father->getRightChild() == deleteLeaf) {
-           father->setRightChild(xNode1);
-        }
+        dag.updateChildren(deleteLeaf, xNode1);
 
-        xNode1->getFathers().insert(father);
+
+        xNode1->getFathers().insert(*deleteLeaf->getFathers().begin());
         yNode1->getFathers().insert(xNode1);
         C1l->getFathers().insert(xNode1);
 
@@ -350,13 +336,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
             dag::Node *deleteLeaf2 = (*it)->getLeaf();
 
-            for (dag::Node* father: deleteLeaf2->getFathers()){
-                if (father->getLeftChild() == deleteLeaf2){
-                    father->setLeftChild(yNode3);
-                } else if (father->getRightChild() == deleteLeaf2) {
-                    father->setRightChild(yNode3);
-                }
-            }
+            dag.updateChildren(deleteLeaf2, yNode3);
 
             A3l->getFathers().insert(yNode3);
             B3l->getFathers().insert(yNode3);
@@ -493,15 +473,11 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
         // Find the node in the DAG and replace it with the new xNode
         dag::Node *deleteLeaf3 = trapezoidSecondEndpoint->getLeaf();
-        dag::Node *father2 = *deleteLeaf3->getFathers().begin();
 
-        if (father2->getLeftChild() == deleteLeaf3){
-            father2->setLeftChild(xNode2);
-        } else if (father2->getRightChild() == deleteLeaf3) {
-            father2->setRightChild(xNode2);
-        }
+        // Find where deleteLeaf3 is a child and substitute it
+        dag.updateChildren(deleteLeaf3, xNode2);
 
-        xNode2->getFathers().insert(father2);
+        xNode2->getFathers().insert(*deleteLeaf3->getFathers().begin());
         yNode2->getFathers().insert(xNode2);
         C2l->getFathers().insert(xNode2);
 

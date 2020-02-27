@@ -144,6 +144,21 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoi
     return nullptr;
 }
 
-/*void removeLeaf(dag::Leaf &leaf){
 
-}*/
+/**
+ * @brief Update the children
+ * @param[in] fathers : a list of fathers
+ * @param[in] oldChildren : the children to substitute
+ * @param[in] newChildren : the substitute
+ */
+void dag::Dag::updateChildren(dag::Node* oldChildren, dag::Node* newChildren){
+    for (const auto& father: oldChildren->getFathers()){
+        if (father->getLeftChild() == oldChildren){
+            // The oldChildren is a left child
+            father->setLeftChild(newChildren);
+        } else {
+            // The oldChildren is a right child
+            father->setRightChild(newChildren);
+        }
+    }
+}
