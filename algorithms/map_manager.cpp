@@ -396,7 +396,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                                         B2);
 
         mergeableUpper = (oldUpper->getTop() == trapezoidSecondEndpoint->getTop() && oldUpper->getBottom() == segmentId);
-        mergeableLower = (oldLower->getTop() == segmentId && oldLower->getBottom() == trapezoidSecondEndpoint->getBottom());
+        mergeableLower = (oldLower->getTop() == C2->getTop() && oldLower->getBottom() == C2->getBottom());
 
         if (mergeableUpper && mergeableLower){
             // Merge upper and lower
@@ -455,8 +455,8 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
             oldLower->setLowerRightTrapezoid(C2);
         }
 
-        B2->Trapezoid::updateAdjacencies(A2,
-                                        C2,
+        B2->Trapezoid::updateAdjacencies(C2,
+                                        A2,
                                         trapezoidSecondEndpoint->getUpperRightTrapezoid(),
                                         trapezoidSecondEndpoint->getLowerRightTrapezoid());
 
