@@ -540,7 +540,7 @@ std::vector<tmap::Trapezoid*> tbuild::followSegment(const dag::Dag &dag,
     while (rightMost.x() > trapezoidalMapDataset.getPoint(trapezoidList[j]->getRightp()).x()) {
 
         // If rightp lies above the segment
-        if (tmap::findPointSide(segment, trapezoidalMapDataset.getPoint(trapezoidList[j]->getRightp()).x())){
+        if (tmap::findPointSide(segment, trapezoidalMapDataset.getPoint(trapezoidList[j]->getRightp()))){
             trapezoidList.push_back(trapezoidList[j]->getLowerRightTrapezoid());
         } else {
             trapezoidList.push_back(trapezoidList[j]->getUpperRightTrapezoid());
