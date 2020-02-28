@@ -1,5 +1,6 @@
 #include "drawable_trapezoidalmap.h"
 
+#include <cg3/viewer/opengl_objects/opengl_objects2.h>
 
 DrawableTrapezoidalMap::DrawableTrapezoidalMap(const int &boundingbox, TrapezoidalMapDataset &trapezoidalMapDataset) :
     TrapezoidalMap(boundingbox),
@@ -40,12 +41,18 @@ void DrawableTrapezoidalMap::draw() const
         cg3::Point2d topRightIntersection = tmap::findIntersectionPoint(top, rightp);
         cg3::Point2d topLeftIntersection = tmap::findIntersectionPoint(top, leftp);
 
+
+        // Draw trapezoid area
         glBegin(GL_POLYGON);
           glVertex2d(bottomLeftIntersection.x(), bottomLeftIntersection.y());
           glVertex2d(bottomRightIntersection.x(), bottomRightIntersection.y());
           glVertex2d(topRightIntersection.x(), topRightIntersection.y());
           glVertex2d(topLeftIntersection.x(), topLeftIntersection.y());
         glEnd();
+
+        // Draw trapezoid boundary
+        cg3::opengl::drawLine2(topLeftIntersection, bottomLeftIntersection, cg3::Color(255, 0, 0), 3);
+        cg3::opengl::drawLine2(topRightIntersection, bottomRightIntersection, cg3::Color(255, 0, 0), 3);
 
         #if YESDEBUG
             // Debug point of trapezoids
