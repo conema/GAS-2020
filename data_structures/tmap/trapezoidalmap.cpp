@@ -54,7 +54,49 @@ void tmap::TrapezoidalMap::addTrapezoid(tmap::Trapezoid *trapezoid)
 void tmap::TrapezoidalMap::removeTrapezoid(tmap::Trapezoid *trapezoid)
 {  
     trapezoids.erase(trapezoid);
+
+    if (trapezoid->getLowerLeftTrapezoid() != nullptr){
+        if (trapezoid->getLowerLeftTrapezoid()->getLowerRightTrapezoid() == trapezoid){
+            trapezoid->getLowerLeftTrapezoid()->setLowerRightTrapezoid(nullptr);
+        }
+
+        if (trapezoid->getLowerLeftTrapezoid()->getUpperRightTrapezoid() == trapezoid){
+            trapezoid->getLowerLeftTrapezoid()->setUpperRightTrapezoid(nullptr);
+        }
+    }
+
+    if (trapezoid->getUpperLeftTrapezoid() != nullptr){
+        if (trapezoid->getUpperLeftTrapezoid()->getLowerRightTrapezoid() == trapezoid){
+            trapezoid->getUpperLeftTrapezoid()->setLowerRightTrapezoid(nullptr);
+        }
+
+        if (trapezoid->getUpperLeftTrapezoid()->getUpperRightTrapezoid() == trapezoid){
+            trapezoid->getUpperLeftTrapezoid()->setUpperRightTrapezoid(nullptr);
+        }
+    }
+
+    if (trapezoid->getLowerRightTrapezoid() != nullptr){
+        if (trapezoid->getLowerRightTrapezoid()->getLowerLeftTrapezoid() == trapezoid){
+            trapezoid->getLowerRightTrapezoid()->setLowerLeftTrapezoid(nullptr);
+        }
+
+        if (trapezoid->getLowerRightTrapezoid()->getUpperLeftTrapezoid() == trapezoid){
+            trapezoid->getLowerRightTrapezoid()->setUpperLeftTrapezoid(nullptr);
+        }
+    }
+
+    if (trapezoid->getUpperRightTrapezoid() != nullptr){
+        if (trapezoid->getUpperRightTrapezoid()->getLowerLeftTrapezoid() == trapezoid){
+            trapezoid->getUpperRightTrapezoid()->setLowerLeftTrapezoid(nullptr);
+        }
+
+        if (trapezoid->getUpperRightTrapezoid()->getUpperLeftTrapezoid() == trapezoid){
+            trapezoid->getUpperRightTrapezoid()->setUpperLeftTrapezoid(nullptr);
+        }
+    }
+
     delete trapezoid;
+    trapezoid = nullptr;
 }
 
 const cg3::BoundingBox2& tmap::TrapezoidalMap::getBoundingBox() const
