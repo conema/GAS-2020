@@ -72,3 +72,18 @@ void tmap::orderPoint(cg3::Point2d &p1, cg3::Point2d &p2)
         std::swap(p2, p1);
    }
 }
+
+/**
+ * @brief return the leftmost point of a segment
+ * @param[in] segment
+ * @return the leftmost point
+ */
+cg3::Point2d tmap::leftMostPoint(cg3::Segment2d segment)
+{
+    if (segment.p1().x() > segment.p2().x()){
+        return segment.p2();
+    }
+
+    return segment.p1();
+}
+
