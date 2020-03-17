@@ -32,17 +32,28 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
         tmap::Trapezoid *trapezoid = *tl.begin();
 
+        // Check if one of the endpoints is equal to leftp or rightp (we should "delete" 1 or 2 trapezoids)
+        bool endpointEqualLeftp = (leftMostId == trapezoid->getLeftp()) && false;
+        bool endpointEqualRightp = (rightMostId == trapezoid->getRightp()) && false;
+
         /* -----  TrapezoidalMap building  -----  */
         // 4 new trapezoids for the segment
-        tmap::Trapezoid *A = new tmap::Trapezoid(trapezoid->getTop(),
-                                                 trapezoid->getBottom(),
-                                                 leftMostId,
-                                                 trapezoid->getLeftp());
+        tmap::Trapezoid *A = nullptr;
+        tmap::Trapezoid *B = nullptr;
 
-        tmap::Trapezoid *B = new tmap::Trapezoid(trapezoid->getTop(),
-                                                 trapezoid->getBottom(),
-                                                 trapezoid->getRightp(),
-                                                 rightMostId);
+        if (!endpointEqualLeftp) {
+            A = new tmap::Trapezoid(trapezoid->getTop(),
+                                    trapezoid->getBottom(),
+                                    leftMostId,
+                                    trapezoid->getLeftp());
+        }
+
+        if (!endpointEqualRightp) {
+            B = new tmap::Trapezoid(trapezoid->getTop(),
+                                    trapezoid->getBottom(),
+                                    trapezoid->getRightp(),
+                                    rightMostId);
+        }
 
         tmap::Trapezoid *C = new tmap::Trapezoid(trapezoid->getTop(),
                                                  segmentId,
@@ -55,47 +66,104 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                                                  leftMostId);
 
         // Add adjacencies
-        A->Trapezoid::updateAdjacencies(trapezoid->getLowerLeftTrapezoid(),
-                                        trapezoid->getUpperLeftTrapezoid(),
-                                        C,
-                                        D);
+        if (!endpointEqualLeftp) {
+            A->Trapezoid::updateAdjacencies(trapezoid->getLowerLeftTrapezoid(),
+                                            trapezoid->getUpperLeftTrapezoid(),
+                                            C,
+                                            D);
+        }
 
-        B->Trapezoid::updateAdjacencies(D,
-                                        C,
-                                        trapezoid->getUpperRightTrapezoid(),
-                                        trapezoid->getLowerRightTrapezoid());
+        if (!endpointEqualRightp) {
+            B->Trapezoid::updateAdjacencies(D,
+                                            C,
+                                            trapezoid->getUpperRightTrapezoid(),
+                                            trapezoid->getLowerRightTrapezoid());
+        }
+
+
         C->Trapezoid::updateAdjacencies(A,
                                         A,
                                         B,
                                         B);
+
         D->Trapezoid::updateAdjacencies(A,
                                         A,
                                         B,
                                         B);
 
-        // Update neighbors' neighbors
+        if (endpointEqualLeftp && endpointEqualRightp){
+            C->Trapezoid::updateAdjacencies(trapezoid->getLowerLeftTrapezoid(),
+                                            trapezoid->getUpperLeftTrapezoid(),
+                                            trapezoid->getUpperRightTrapezoid(),
+                                            trapezoid->getLowerRightTrapezoid());
+            D->Trapezoid::updateAdjacencies(trapezoid->getLowerLeftTrapezoid(),
+                                            trapezoid->getUpperLeftTrapezoid(),
+                                            trapezoid->getUpperRightTrapezoid(),
+                                            trapezoid->getLowerRightTrapezoid());
+        } else if (endpointEqualLeftp) {
+            C->setLowerLeftTrapezoid(trapezoid->getLowerLeftTrapezoid());
+            C->setUpperLeftTrapezoid(trapezoid->getUpperLeftTrapezoid());
+        } else if (endpointEqualRightp) {
+            C->setLowerRightTrapezoid(trapezoid->getLowerRightTrapezoid());
+            C->setUpperRightTrapezoid(trapezoid->getUpperRightTrapezoid());
+        }
+
+
+
+        // Update left neighbors of trapezoid
         if (trapezoid->getLowerLeftTrapezoid() != nullptr){
-            trapezoid->getLowerLeftTrapezoid()->setLowerRightTrapezoid(A);
-            trapezoid->getLowerLeftTrapezoid()->setUpperRightTrapezoid(A);
+            // Case where the new segment is in the LOWER right neighbor
+            if (trapezoid == trapezoid->getLowerLeftTrapezoid()->getLowerRightTrapezoid()){
+                if (endpointEqualLeftp){
+                    trapezoid->getLowerLeftTrapezoid()->setLowerRightTrapezoid(C);
+                } else {
+                    trapezoid->getLowerLeftTrapezoid()->setLowerRightTrapezoid(A);
+                }
+            }
         }
 
         if (trapezoid->getUpperLeftTrapezoid() != nullptr){
-            trapezoid->getUpperLeftTrapezoid()->setLowerRightTrapezoid(A);
-            trapezoid->getUpperLeftTrapezoid()->setUpperRightTrapezoid(A);
+            // Case where the new segment is in the UPPER right neighbor
+            if (trapezoid == trapezoid->getLowerLeftTrapezoid()->getUpperRightTrapezoid()){
+                if (endpointEqualLeftp){
+                    trapezoid->getLowerLeftTrapezoid()->setUpperRightTrapezoid(C);
+                } else {
+                    trapezoid->getLowerLeftTrapezoid()->setUpperRightTrapezoid(A);
+                }
+            }
+        }
+
+        // Update right neighbors of trapezoid
+        if (trapezoid->getLowerRightTrapezoid() != nullptr){
+            // Case where the new segment is in the LOWER left neighbor
+            if (trapezoid == trapezoid->getLowerRightTrapezoid()->getLowerLeftTrapezoid()){
+                if (endpointEqualRightp){
+                    trapezoid->getLowerRightTrapezoid()->setLowerLeftTrapezoid(C);
+                } else {
+                    trapezoid->getLowerRightTrapezoid()->setLowerLeftTrapezoid(B);
+                }
+            }
         }
 
         if (trapezoid->getUpperRightTrapezoid() != nullptr){
-            trapezoid->getUpperRightTrapezoid()->setLowerLeftTrapezoid(B);
-            trapezoid->getUpperRightTrapezoid()->setUpperLeftTrapezoid(B);
+            // Case where the new segment is in the UPPER left neighbor
+            if (trapezoid == trapezoid->getUpperRightTrapezoid()->getUpperLeftTrapezoid()){
+                if (endpointEqualRightp){
+                    trapezoid->getUpperRightTrapezoid()->setUpperLeftTrapezoid(C);
+                } else {
+                    trapezoid->getUpperRightTrapezoid()->setUpperLeftTrapezoid(B);
+                }
+            }
         }
 
-        if (trapezoid->getLowerRightTrapezoid() != nullptr){
-            trapezoid->getLowerRightTrapezoid()->setLowerLeftTrapezoid(B);
-            trapezoid->getLowerRightTrapezoid()->setUpperLeftTrapezoid(B);
+        if (!endpointEqualLeftp) {
+            trapezoidalMap.addTrapezoid(A);
         }
 
-        trapezoidalMap.addTrapezoid(A);
-        trapezoidalMap.addTrapezoid(B);
+        if (!endpointEqualRightp) {
+            trapezoidalMap.addTrapezoid(B);
+        }
+
         trapezoidalMap.addTrapezoid(C);
         trapezoidalMap.addTrapezoid(D);
 
@@ -106,42 +174,50 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
         dag::YNode *si = new dag::YNode(segmentId);
 
         // Create leaves with trapezoids
-        dag::Leaf *Al = new dag::Leaf(A);
-        dag::Leaf *Bl = new dag::Leaf(B);
+
+        dag::Leaf *Al = nullptr;
+        if (!endpointEqualLeftp) {
+            Al = new dag::Leaf(A);
+        } else {
+            Al = C->getLowerLeftTrapezoid()->getLeaf();
+        }
+        Al->getFathers().insert(pi);
+
+        dag::Leaf *Bl = nullptr;
+        if (!endpointEqualRightp) {
+            Bl = new dag::Leaf(B);
+        } else {
+            Bl = C->getLowerRightTrapezoid()->getLeaf();
+        }
+        Bl->getFathers().insert(qi);
+
         dag::Leaf *Cl = new dag::Leaf(C);
+        Cl->getFathers().insert(si);
+
         dag::Leaf *Dl = new dag::Leaf(D);
+        Dl->getFathers().insert(si);
 
         // Find node on the DAG
         dag::Node *foundNode = trapezoid->getLeaf();
 
-        // Find if findNode is a left or right child
-        std::unordered_set<dag::Node*> findNodeFathers = foundNode->getFathers();
-
-        if (findNodeFathers.size() == 0){
+        if (foundNode->getFathers().size() == 0){
             // The foundNode is the root and it's substituted with si
             dag.setRoot(pi);
         }else {
-            for (const auto& father: findNodeFathers){
-                if (father->getLeftChild() == foundNode){
-                    // The foundNode is a left child
-                    father->setLeftChild(pi);
-                } else {
-                    // The foundNode is a right child
-                    father->setRightChild(pi);
-                }
-            }
+            // Update the children of the father of foundNode
+            dag.updateChildren(foundNode, pi);
         }
-        Al->getFathers().insert(pi);
-        Bl->getFathers().insert(qi);
-        Cl->getFathers().insert(si);
-        Dl->getFathers().insert(si);
 
-        pi->setLeftChild(Al);
+        if (!endpointEqualLeftp) {
+            pi->setLeftChild(Al);
+        }
         pi->setRightChild(qi);
         pi->getFathers() = foundNode->getFathers();
 
         qi->setLeftChild(si);
-        qi->setRightChild(Bl);
+        if (!endpointEqualRightp) {
+            qi->setRightChild(Bl);
+        }
         qi->getFathers().insert(pi);
 
         si->setLeftChild(Cl);
@@ -149,22 +225,30 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
         si->getFathers().insert(qi);
 
         // Link between trapezoids and leaves
-        A->setLeaf(Al);
-        B->setLeaf(Bl);
+        if (!endpointEqualLeftp) {
+            A->setLeaf(Al);
+        }
+        if (!endpointEqualRightp) {
+            B->setLeaf(Bl);
+        }
         C->setLeaf(Cl);
         D->setLeaf(Dl);
 
         trapezoidalMap.removeTrapezoid(trapezoid);
         delete foundNode;
-    } else {
+        foundNode = nullptr;
+    } else if (tl.size() > 1) {
         // >1 Trapezoid intersected
 
-        tmap::Trapezoid *trapezoidFirstEndpoint = *tl.begin();
-        tmap::Trapezoid *trapezoidSecondEndpoint = tl.back();
+        const tmap::Trapezoid* trapezoidFirstEndpoint = *tl.begin();
+        const tmap::Trapezoid* trapezoidSecondEndpoint = tl.back();
+        //trapezoidalMap.removeTrapezoid(tl.back());
+        //trapezoidalMap.removeTrapezoid(*tl.begin());
 
-        /* -----  TrapezoidalMap building  -----  */
+        /* -----  Left endpoint  -----  */
         // 3 new trapezoids for the left endpoint of the segment
         // Left trapezoid
+
         tmap::Trapezoid *A1 = new tmap::Trapezoid(trapezoidFirstEndpoint->getTop(),
                                                  trapezoidFirstEndpoint->getBottom(),
                                                  leftMostId,
@@ -190,7 +274,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
         B1->Trapezoid::updateAdjacencies(A1,
                                         A1,
-                                        nullptr,
+                                        trapezoidFirstEndpoint->getUpperRightTrapezoid(),
                                         nullptr);
 
         C1->Trapezoid::updateAdjacencies(A1,
@@ -198,64 +282,188 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                                         nullptr,
                                         nullptr);
 
-        // Update neighbors' neighbors
+        // Update neighbors' neighbors, they are updated only if the pointers are nullptr, otherwise they are valid pointers to some trapezoids
         if (trapezoidFirstEndpoint->getLowerLeftTrapezoid() != nullptr){
-            trapezoidFirstEndpoint->getLowerLeftTrapezoid()->setLowerRightTrapezoid(A1);
-            trapezoidFirstEndpoint->getLowerLeftTrapezoid()->setUpperRightTrapezoid(A1);
+            if (trapezoidFirstEndpoint->getLowerLeftTrapezoid()->getLowerRightTrapezoid()  == nullptr && trapezoidFirstEndpoint->getLowerLeftTrapezoid()->getLowerRightTrapezoid() == trapezoidFirstEndpoint) {
+                trapezoidFirstEndpoint->getLowerLeftTrapezoid()->setLowerRightTrapezoid(A1);
+            }
+
+            if (trapezoidFirstEndpoint->getLowerLeftTrapezoid()->getUpperRightTrapezoid()  == nullptr && trapezoidFirstEndpoint->getLowerLeftTrapezoid()->getUpperRightTrapezoid()  == trapezoidFirstEndpoint){
+                trapezoidFirstEndpoint->getLowerLeftTrapezoid()->setUpperRightTrapezoid(A1);
+            }
         }
 
         if (trapezoidFirstEndpoint->getUpperLeftTrapezoid() != nullptr){
-            trapezoidFirstEndpoint->getUpperLeftTrapezoid()->setLowerRightTrapezoid(A1);
-            trapezoidFirstEndpoint->getUpperLeftTrapezoid()->setUpperRightTrapezoid(A1);
+            if (/*trapezoidFirstEndpoint->getUpperLeftTrapezoid()->getLowerRightTrapezoid() == nullptr &&*/ trapezoidFirstEndpoint->getUpperLeftTrapezoid()->getLowerRightTrapezoid() == trapezoidFirstEndpoint){
+                trapezoidFirstEndpoint->getUpperLeftTrapezoid()->setLowerRightTrapezoid(A1);
+            }
+
+            if (/*trapezoidFirstEndpoint->getUpperLeftTrapezoid()->getUpperRightTrapezoid() == nullptr &&*/ trapezoidFirstEndpoint->getUpperLeftTrapezoid()->getUpperRightTrapezoid() == trapezoidFirstEndpoint){
+                trapezoidFirstEndpoint->getUpperLeftTrapezoid()->setUpperRightTrapezoid(A1);
+            }
         }
 
-        trapezoidalMap.removeTrapezoid(trapezoidFirstEndpoint);
+        if (trapezoidFirstEndpoint->getLowerRightTrapezoid() != nullptr){
+            if (/*trapezoidFirstEndpoint->getLowerRightTrapezoid()->getLowerLeftTrapezoid()  == nullptr &&*/ trapezoidFirstEndpoint->getLowerRightTrapezoid()->getLowerLeftTrapezoid() == trapezoidFirstEndpoint) {
+                trapezoidFirstEndpoint->getLowerRightTrapezoid()->setLowerLeftTrapezoid(C1);
+            }
+
+            if (/*trapezoidFirstEndpoint->getLowerRightTrapezoid()->getUpperLeftTrapezoid()  == nullptr &&*/ trapezoidFirstEndpoint->getLowerRightTrapezoid()->getUpperLeftTrapezoid() == trapezoidFirstEndpoint){
+                trapezoidFirstEndpoint->getLowerRightTrapezoid()->setUpperLeftTrapezoid(C1);
+            }
+        }
+
+        if (trapezoidFirstEndpoint->getUpperRightTrapezoid() != nullptr){
+            if (/*trapezoidFirstEndpoint->getUpperRightTrapezoid()->getLowerLeftTrapezoid() == nullptr &&*/ trapezoidFirstEndpoint->getUpperRightTrapezoid()->getLowerLeftTrapezoid() == trapezoidFirstEndpoint){
+                trapezoidFirstEndpoint->getUpperRightTrapezoid()->setLowerLeftTrapezoid(C1);
+            }
+
+            if (/*trapezoidFirstEndpoint->getUpperRightTrapezoid()->getUpperLeftTrapezoid() == nullptr &&*/ trapezoidFirstEndpoint->getUpperRightTrapezoid()->getUpperLeftTrapezoid() == trapezoidFirstEndpoint){
+                trapezoidFirstEndpoint->getUpperRightTrapezoid()->setUpperLeftTrapezoid(C1);
+            }
+        }
 
         trapezoidalMap.addTrapezoid(A1);
         trapezoidalMap.addTrapezoid(B1);
         trapezoidalMap.addTrapezoid(C1);
 
-        // Other trapezoid in the middle of the segment from tl(1+1) to tl(n-1)
+        // DAG nodes building for left endpoint
+        dag::XNode *xNode1 = new dag::XNode(leftMostId);
+        dag::YNode *yNode1 = new dag::YNode(segmentId);
+        dag::Leaf *A1l = new dag::Leaf(A1);
+        dag::Leaf *B1l = new dag::Leaf(B1);
+        dag::Leaf *C1l = new dag::Leaf(C1);
+
+        xNode1->setLeftChild(A1l);
+        xNode1->setRightChild(yNode1);
+
+        yNode1->setLeftChild(B1l);
+        yNode1->setRightChild(C1l);
+
+        A1->setLeaf(A1l);
+        B1->setLeaf(B1l);
+        C1->setLeaf(C1l);
+
+        // Find the node in the DAG and replace it with the new xNode
+        dag::Leaf *deleteLeaf = trapezoidFirstEndpoint->getLeaf();
+
+        dag.updateChildren(deleteLeaf, xNode1);
+
+
+        xNode1->getFathers() = deleteLeaf->getFathers();
+        yNode1->getFathers().insert(xNode1);
+
+        A1l->getFathers().insert(xNode1);
+        B1l->getFathers().insert(yNode1);
+        C1l->getFathers().insert(yNode1);
+
+        delete deleteLeaf;
+        deleteLeaf = nullptr;
+
+        /* -----  Middle of the segments  -----  */
+        // Trapezoid in the middle of the segment from tl(1+1) to tl(n-1)
         tmap::Trapezoid *oldUpper = B1;
         tmap::Trapezoid *oldLower = C1;
 
+        bool mergeableUpper, mergeableLower;
+
+        tmap::Trapezoid *A3, *B3;
+
         for (auto it = tl.begin()+1; it != tl.end()-1; ++it){
-            tmap::Trapezoid* A3 = new tmap::Trapezoid((*it)->getTop(),
-                                                      segmentId,
-                                                      (*it)->getRightp(),
-                                                      (*it)->getLeftp());
+            mergeableUpper = (oldUpper->getTop() == (*it)->getTop() && oldUpper->getBottom() == segmentId);
+            mergeableLower = (oldLower->getTop() == segmentId && oldLower->getBottom() == (*it)->getBottom());
 
-            tmap::Trapezoid* B3 = new tmap::Trapezoid(segmentId,
-                                                      (*it)->getBottom(),
-                                                      (*it)->getRightp(),
-                                                      (*it)->getLeftp());
+            // Merge trapezoid
+            if (mergeableUpper){
+                // Merge upper trapezoid
+                oldUpper->setRightp((*it)->getRightp());
 
+                A3 = oldUpper;
 
+                B3 = new tmap::Trapezoid(segmentId,
+                                        (*it)->getBottom(),
+                                        (*it)->getRightp(),
+                                        (*it)->getLeftp());
 
-            A3->Trapezoid::updateAdjacencies(oldUpper, oldUpper, nullptr, nullptr);
-            B3->Trapezoid::updateAdjacencies(oldLower, oldLower, nullptr, nullptr);
+                B3->Trapezoid::updateAdjacencies(oldLower, oldLower, nullptr, nullptr);
 
-            oldUpper->setUpperRightTrapezoid(A3);
-            oldUpper->setLowerRightTrapezoid(A3);
+                oldLower->setUpperRightTrapezoid(B3);
+                oldLower->setLowerRightTrapezoid(B3);
 
-            oldLower->setUpperRightTrapezoid(B3);
-            oldLower->setLowerRightTrapezoid(B3);
+                oldLower = B3;
+                trapezoidalMap.addTrapezoid(B3);
 
-            oldUpper = A3;
-            oldLower = B3;
+            } else if (mergeableLower){
+                // Merge lower trapezoid
+                oldLower->setRightp((*it)->getRightp());
 
-            trapezoidalMap.addTrapezoid(A3);
-            trapezoidalMap.addTrapezoid(B3);
+                B3 = oldLower;
+
+                A3 = new tmap::Trapezoid((*it)->getTop(),
+                                         segmentId,
+                                         (*it)->getRightp(),
+                                         (*it)->getLeftp());
+
+                A3->Trapezoid::updateAdjacencies(oldUpper, oldUpper, nullptr, nullptr);
+
+                // If the upperRight neighbor is null, it mean that it was deleted and it wasn't really a neighbor (##CASE A##)
+                if (oldUpper->getUpperRightTrapezoid() == nullptr) {
+                    oldUpper->setUpperRightTrapezoid(A3);
+                }
+
+                oldUpper->setLowerRightTrapezoid(A3);
+
+                oldUpper = A3;
+
+                trapezoidalMap.addTrapezoid(A3);
+            }
+
+            dag::Leaf *A3l;
+            dag::Leaf *B3l;
+
+            // Create a new DAG leaf only if the trapezoid is not already inserted
+            if (A3->getLeaf() == nullptr){
+                A3l = new dag::Leaf(A3);
+            } else {
+                A3l = A3->getLeaf();
+            }
+
+            if (B3->getLeaf() == nullptr){
+                B3l = new dag::Leaf(B3);
+            } else {
+                B3l = B3->getLeaf();
+            }
+
+            dag::YNode *yNode3 = new dag::YNode(segmentId);
+            yNode3->setRightChild(B3l);
+            yNode3->setLeftChild(A3l);
+
+            dag::Node *deleteLeaf2 = (*it)->getLeaf();
+
+            dag.updateChildren(deleteLeaf2, yNode3);
+
+            yNode3->getFathers() = deleteLeaf2->getFathers();
+            A3l->getFathers().insert(yNode3);
+            B3l->getFathers().insert(yNode3);
+
+            A3->setLeaf(A3l);
+            B3->setLeaf(B3l);
+
+            delete deleteLeaf2;
+            deleteLeaf2 = nullptr;
 
             trapezoidalMap.removeTrapezoid(*it);
         }
 
+
+
+        /* -----  Right endpoint  -----  */
         // 3 new trapezoids for the right endpoint of the segment
         // Top trapezoid
         tmap::Trapezoid *A2 = new tmap::Trapezoid(trapezoidSecondEndpoint->getTop(),
-                                                 segmentId,
-                                                 rightMostId,
-                                                 trapezoidSecondEndpoint->getLeftp());
+                                                  segmentId,
+                                                  rightMostId,
+                                                  trapezoidSecondEndpoint->getLeftp());
 
         // Right trapezoid
         tmap::Trapezoid *B2 = new tmap::Trapezoid(trapezoidSecondEndpoint->getTop(),
@@ -265,52 +473,165 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
         // Bottom trapezoid
         tmap::Trapezoid *C2 = new tmap::Trapezoid(segmentId,
-                                                 trapezoidSecondEndpoint->getBottom(),
-                                                 rightMostId,
-                                                 trapezoidSecondEndpoint->getLeftp());
-
-
+                                                  trapezoidSecondEndpoint->getBottom(),
+                                                  rightMostId,
+                                                  trapezoidSecondEndpoint->getLeftp());
 
         A2->Trapezoid::updateAdjacencies(oldUpper,
                                         oldUpper,
                                         B2,
                                         B2);
 
-        B2->Trapezoid::updateAdjacencies(A2,
-                                        C2,
-                                        trapezoidSecondEndpoint->getUpperRightTrapezoid(),
-                                        trapezoidSecondEndpoint->getLowerRightTrapezoid());
-
         C2->Trapezoid::updateAdjacencies(oldLower,
                                         oldLower,
                                         B2,
                                         B2);
 
-        oldUpper->setUpperRightTrapezoid(A2);
-        oldUpper->setLowerRightTrapezoid(A2);
+        mergeableUpper = (oldUpper->getTop() == A2->getTop() && oldUpper->getBottom() == segmentId);
+        mergeableLower = (oldLower->getTop() == C2->getTop() && oldLower->getBottom() == C2->getBottom());
 
-        oldLower->setUpperRightTrapezoid(C2);
-        oldLower->setLowerRightTrapezoid(C2);
+       if (mergeableUpper){
+            // Merge upper trapezoid
+            oldUpper->setRightp(rightMostId);
+
+            delete A2;
+            A2 = oldUpper;
+
+            A2->Trapezoid::updateAdjacencies(A2->getLowerLeftTrapezoid(),
+                                             A2->getUpperLeftTrapezoid(),
+                                             B2,
+                                             B2);
+
+
+           oldLower->setUpperRightTrapezoid(C2);
+           oldLower->setLowerRightTrapezoid(trapezoidFirstEndpoint->getLowerRightTrapezoid());
+
+            if (trapezoidSecondEndpoint->getLowerLeftTrapezoid() != nullptr){
+                //trapezoidSecondEndpoint->getLowerLeftTrapezoid()->setUpperRightTrapezoid(C2);
+                //trapezoidSecondEndpoint->getLowerLeftTrapezoid()->setLowerRightTrapezoid(C2);
+            }
+
+            trapezoidalMap.addTrapezoid(C2);
+        } else if (mergeableLower){
+            // Merge lower trapezoid
+            oldLower->setRightp(rightMostId);
+
+            delete C2;
+            C2 = oldLower;
+
+            C2->Trapezoid::updateAdjacencies(C2->getLowerLeftTrapezoid(),
+                                             C2->getUpperLeftTrapezoid(),
+                                             B2,
+                                             B2);
+
+            // If the upperRight neighbor is null, it mean that it was deleted and it wasn't really a neighbor (##CASE A##)
+            if (oldUpper->getUpperRightTrapezoid() == nullptr) {
+                oldUpper->setUpperRightTrapezoid(A2);
+            }
+
+            oldUpper->setLowerRightTrapezoid(A2);
+
+            trapezoidalMap.addTrapezoid(A2);
+        }
+
+        B2->Trapezoid::updateAdjacencies(C2,
+                                        A2,
+                                        trapezoidSecondEndpoint->getUpperRightTrapezoid(),
+                                        trapezoidSecondEndpoint->getLowerRightTrapezoid());
+
+        trapezoidalMap.addTrapezoid(B2);
+
 
         // Update neighbors' neighbors
         if (trapezoidSecondEndpoint->getLowerRightTrapezoid() != nullptr){
-            trapezoidSecondEndpoint->getLowerRightTrapezoid()->setLowerLeftTrapezoid(B2);
-            trapezoidSecondEndpoint->getLowerRightTrapezoid()->setUpperLeftTrapezoid(B2);
+            if (/*trapezoidSecondEndpoint->getLowerRightTrapezoid()->getLowerLeftTrapezoid() != nullptr && **/trapezoidSecondEndpoint->getLowerRightTrapezoid()->getLowerLeftTrapezoid() == trapezoidSecondEndpoint){
+                trapezoidSecondEndpoint->getLowerRightTrapezoid()->setLowerLeftTrapezoid(B2);
+            }
+
+            if (/*trapezoidSecondEndpoint->getLowerRightTrapezoid()->getUpperLeftTrapezoid() != nullptr && **/trapezoidSecondEndpoint->getLowerRightTrapezoid()->getUpperLeftTrapezoid() == trapezoidSecondEndpoint){
+                trapezoidSecondEndpoint->getLowerRightTrapezoid()->setUpperLeftTrapezoid(B2);
+            }
         }
 
         if (trapezoidSecondEndpoint->getUpperRightTrapezoid() != nullptr){
-            trapezoidSecondEndpoint->getUpperRightTrapezoid()->setLowerLeftTrapezoid(B2);
-            trapezoidSecondEndpoint->getUpperRightTrapezoid()->setUpperLeftTrapezoid(B2);
+            if (/*trapezoidSecondEndpoint->getUpperRightTrapezoid()->getLowerLeftTrapezoid() != nullptr && **/trapezoidSecondEndpoint->getUpperRightTrapezoid()->getLowerLeftTrapezoid() == trapezoidSecondEndpoint){
+                trapezoidSecondEndpoint->getUpperRightTrapezoid()->setLowerLeftTrapezoid(B2);
+            }
+
+            if (/*trapezoidSecondEndpoint->getUpperRightTrapezoid()->getUpperLeftTrapezoid() != nullptr && **/trapezoidSecondEndpoint->getUpperRightTrapezoid()->getUpperLeftTrapezoid() == trapezoidSecondEndpoint){
+                trapezoidSecondEndpoint->getUpperRightTrapezoid()->setUpperLeftTrapezoid(B2);
+            }
         }
 
-        trapezoidalMap.addTrapezoid(A2);
-        trapezoidalMap.addTrapezoid(B2);
-        trapezoidalMap.addTrapezoid(C2);
+       if (trapezoidSecondEndpoint->getLowerLeftTrapezoid() != nullptr){
+           if (/*trapezoidSecondEndpoint->getLowerLeftTrapezoid()->getLowerRightTrapezoid() != nullptr && **/trapezoidSecondEndpoint->getLowerLeftTrapezoid()->getLowerRightTrapezoid() == trapezoidSecondEndpoint){
+               trapezoidSecondEndpoint->getLowerLeftTrapezoid()->setLowerRightTrapezoid(B2);
+           }
 
-        trapezoidalMap.removeTrapezoid(trapezoidSecondEndpoint);
+           if (/*trapezoidSecondEndpoint->getLowerLeftTrapezoid()->getUpperRightTrapezoid() != nullptr && **/trapezoidSecondEndpoint->getLowerLeftTrapezoid()->getUpperRightTrapezoid() == trapezoidSecondEndpoint){
+               trapezoidSecondEndpoint->getLowerLeftTrapezoid()->setUpperRightTrapezoid(B2);
+           }
+        }
+
+        if (trapezoidSecondEndpoint->getUpperLeftTrapezoid() != nullptr){
+            if (/*trapezoidSecondEndpoint->getUpperLeftTrapezoid()->getLowerRightTrapezoid() != nullptr && **/trapezoidSecondEndpoint->getUpperLeftTrapezoid()->getLowerRightTrapezoid() == trapezoidSecondEndpoint){
+                trapezoidSecondEndpoint->getUpperLeftTrapezoid()->setLowerRightTrapezoid(B2);
+            }
+
+            if (/*trapezoidSecondEndpoint->getUpperLeftTrapezoid()->getUpperRightTrapezoid() != nullptr && **/trapezoidSecondEndpoint->getUpperLeftTrapezoid()->getUpperRightTrapezoid() == trapezoidSecondEndpoint){
+                trapezoidSecondEndpoint->getUpperLeftTrapezoid()->setUpperRightTrapezoid(B2);
+            }
+        }
 
 
-        /* ----- DAG nodes building -----  */
+        // DAG nodes building for right endpoint
+        dag::XNode *xNode2 = new dag::XNode(rightMostId);
+        dag::YNode *yNode2 = new dag::YNode(segmentId);
+        dag::Leaf *A2l;
+        dag::Leaf *B2l = new dag::Leaf(B2);
+        dag::Leaf *C2l;
+
+        // Create a new DAG leaf only if the trapezoid is not already inserted
+        if (C2->getLeaf() == nullptr){
+            C2l = new dag::Leaf(C2);
+        } else {
+            C2l = C2->getLeaf();
+        }
+
+        if (A2->getLeaf() == nullptr){
+            A2l = new dag::Leaf(A2);
+        } else {
+            A2l = A2->getLeaf();
+        }
+
+        xNode2->setRightChild(B2l);
+        xNode2->setLeftChild(yNode2);
+
+        yNode2->setRightChild(C2l);
+        yNode2->setLeftChild(A2l);
+
+        // Find the node in the DAG and replace it with the new xNode
+        dag::Node *deleteLeaf3 = trapezoidSecondEndpoint->getLeaf();
+
+        // Find where deleteLeaf3 is a child and substitute it
+        dag.updateChildren(deleteLeaf3, xNode2);
+
+        xNode2->getFathers() = deleteLeaf3->getFathers();
+        yNode2->getFathers().insert(xNode2);
+
+        A2l->getFathers().insert(yNode2);
+        B2l->getFathers().insert(xNode2);
+        C2l->getFathers().insert(yNode2);
+
+        A2->setLeaf(A2l);
+        B2->setLeaf(B2l);
+        C2->setLeaf(C2l);
+
+        trapezoidalMap.removeTrapezoid(*tl.begin());
+        trapezoidalMap.removeTrapezoid(tl.back());
+
+        delete deleteLeaf3;
+        deleteLeaf3 = nullptr;
     }
 }
 
@@ -335,7 +656,7 @@ std::vector<tmap::Trapezoid*> tbuild::followSegment(const dag::Dag &dag,
     tmap::orderPoint(leftMost, rightMost);
 
     // Get trapezoid from DAG
-    dag::Leaf *l = dag.findPoint(dag.getRoot(), trapezoidalMapDataset, leftMost);
+    dag::Leaf *l = dag.findPoint(dag.getRoot(), trapezoidalMapDataset, cg3::Segment2d(leftMost, rightMost));
     tmap::Trapezoid *trapezoid = l->getTrapezoid();
 
     trapezoidList.push_back(trapezoid);
@@ -344,7 +665,7 @@ std::vector<tmap::Trapezoid*> tbuild::followSegment(const dag::Dag &dag,
     while (rightMost.x() > trapezoidalMapDataset.getPoint(trapezoidList[j]->getRightp()).x()) {
 
         // If rightp lies above the segment
-        if (tmap::findPointSide(segment, trapezoidalMapDataset.getPoint(trapezoidList[j]->getRightp()).x())){
+        if (tmap::findPointSide(segment, trapezoidalMapDataset.getPoint(trapezoidList[j]->getRightp()))){
             trapezoidList.push_back(trapezoidList[j]->getLowerRightTrapezoid());
         } else {
             trapezoidList.push_back(trapezoidList[j]->getUpperRightTrapezoid());

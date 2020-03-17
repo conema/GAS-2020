@@ -95,7 +95,11 @@ void dag::Dag::deleteGraph(Node *node)
     deleteGraph(node->getLeftChild());
     deleteGraph(node->getRightChild());
 
+    Node copyNode = *node;
+
     delete node;
+
+    updateChildren(&copyNode, nullptr);
     node = nullptr;
 }
 
@@ -103,9 +107,9 @@ void dag::Dag::deleteGraph(Node *node)
  * @brief Find a point into a trapezoid
  * @param[in] *node: pointer to a node
  * @param[in] *trapezoidalMapDataset: the trapezoidal map dataset to find points and segments
- * @param[in] pointId: the point id to search
+ * @param[in] &segment: the point to search
  */
-dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoidalMapDataset, const cg3::Point2d &point) const
+dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoidalMapDataset, const cg3::Segment2d &segment) const
 {
     if (node == nullptr){
         return nullptr;
@@ -120,10 +124,10 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoi
             const cg3::Point2d &nodePoint = trapezoidalMapDataset.getPoint(getXNode(node)->getPointId());
 
             // Test if the point is on the left or on the right of nodePoint
-            if (nodePoint.x() > point.x()){
-                return findPoint(node->getLeftChild(), trapezoidalMapDataset, point);
+            if (nodePoint.x() > segment.p1().x()){
+                return findPoint(node->getLeftChild(), trapezoidalMapDataset, segment);
             } else {
-                return findPoint(node->getRightChild(), trapezoidalMapDataset, point);
+                return findPoint(node->getRightChild(), trapezoidalMapDataset, segment);
             }
             break;
         }
@@ -131,11 +135,20 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoi
         {
             const cg3::Segment2d &nodeSegment = trapezoidalMapDataset.getSegment(getYNode(node)->getSegmentId());
 
+            // Test if the point is equal to the endpoint
+            if(nodeSegment.p2() == segment.p1()){
+                if (segment.p1().y() < segment.p2().y()){
+                    return findPoint(node->getLeftChild(), trapezoidalMapDataset, segment);
+                } else {
+                    return findPoint(node->getRightChild(), trapezoidalMapDataset, segment);
+                }
+            }
+
             // Test if the point is on the left or on the right of nodePoint
-            if(tmap::findPointSide(nodeSegment, point)){
-                return findPoint(node->getLeftChild(), trapezoidalMapDataset, point);
+            if(tmap::findPointSide(nodeSegment, segment.p1())){
+                return findPoint(node->getLeftChild(), trapezoidalMapDataset, segment);
             } else {
-                return findPoint(node->getRightChild(), trapezoidalMapDataset, point);
+                return findPoint(node->getRightChild(), trapezoidalMapDataset, segment);
             }
         }
     }
@@ -144,6 +157,20 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoi
     return nullptr;
 }
 
-/*void removeLeaf(dag::Leaf &leaf){
-
-}*/
+/**
+ * @brief Update the children
+ * @param[in] fathers : a list of fathers
+ * @param[in] oldChildren : the children to substitute
+ * @param[in] newChildren : the substitute
+ */
+void dag::Dag::updateChildren(dag::Node* oldChildren, dag::Node* newChildren){
+    for (const auto& father: oldChildren->getFathers()){
+        if (father->getLeftChild() != nullptr && father->getLeftChild() == oldChildren){
+            // The oldChildren is a left child
+            father->setLeftChild(newChildren);
+        } else if(father->getRightChild() != nullptr) {
+            // The oldChildren is a right child
+            father->setRightChild(newChildren);
+        }
+    }
+}

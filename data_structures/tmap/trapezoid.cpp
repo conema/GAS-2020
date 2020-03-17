@@ -14,7 +14,8 @@ tmap::Trapezoid::Trapezoid(const size_t top,
     bottom(bottom),
     rightp(rightp),
     leftp(leftp),
-    color(generateColor())
+    color(generateColor()),
+    leaf(nullptr)
 {
 
 }
@@ -43,6 +44,11 @@ const size_t &tmap::Trapezoid::getBottom() const
 const size_t &tmap::Trapezoid::getRightp() const
 {
     return rightp;
+}
+
+void tmap::Trapezoid::setRightp(const size_t &value)
+{
+    rightp = value;
 }
 
 const size_t &tmap::Trapezoid::getLeftp() const
