@@ -253,17 +253,17 @@ void TrapezoidalMapManager::queryTrapezoidalMap(const cg3::Point2d& queryPoint)
     // Get trapezoid from dag and highlighten it on the drawable map
     dag::Leaf* leafTrapezoid = dag.findPoint(dag.getRoot(), drawableTrapezoidalMapDataset, cg3::Segment2d(queryPoint, 0));
 
-    std::cout<<leafTrapezoid->getTrapezoid()<<std::endl;
-    std::cout<<"Left Upper: "<<leafTrapezoid->getTrapezoid()->getUpperLeftTrapezoid()<<std::endl;
-    std::cout<<"Left lower: "<<leafTrapezoid->getTrapezoid()->getLowerLeftTrapezoid()<<std::endl;
-    std::cout<<"Right Upper: "<<leafTrapezoid->getTrapezoid()->getUpperRightTrapezoid()<<std::endl;
-    std::cout<<"Right lower: "<<leafTrapezoid->getTrapezoid()->getLowerRightTrapezoid()<<std::endl;
-
-    std::cout<<"Point: "<<queryPoint<<std::endl;
-
     // It can be null if someone try to query the empty map with no trapezoids
     if (leafTrapezoid != nullptr){
         drawableTrapezoidalMap.setHighlightedTrapezoid(leafTrapezoid->getTrapezoid());
+
+        std::cout<<leafTrapezoid->getTrapezoid()<<std::endl;
+        std::cout<<"Left Upper: "<<leafTrapezoid->getTrapezoid()->getUpperLeftTrapezoid()<<std::endl;
+        std::cout<<"Left lower: "<<leafTrapezoid->getTrapezoid()->getLowerLeftTrapezoid()<<std::endl;
+        std::cout<<"Right Upper: "<<leafTrapezoid->getTrapezoid()->getUpperRightTrapezoid()<<std::endl;
+        std::cout<<"Right lower: "<<leafTrapezoid->getTrapezoid()->getLowerRightTrapezoid()<<std::endl;
+
+        std::cout<<"Point: "<<queryPoint<<std::endl;
     }
 
     //#####################################################################

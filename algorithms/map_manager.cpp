@@ -113,23 +113,25 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
         // Update left neighbors of trapezoid
         if (trapezoid->getLowerLeftTrapezoid() != nullptr){
             // Case where the new segment is in the LOWER right neighbor
-            if (trapezoid == trapezoid->getLowerLeftTrapezoid()->getLowerRightTrapezoid()){
-                if (endpointEqualLeftp){
-                    trapezoid->getLowerLeftTrapezoid()->setLowerRightTrapezoid(C);
-                } else {
-                    trapezoid->getLowerLeftTrapezoid()->setUpperRightTrapezoid(A);
+            if (endpointEqualLeftp){
+                trapezoid->getLowerLeftTrapezoid()->setLowerRightTrapezoid(C);
+            } else {
+                if (trapezoid == trapezoid->getLowerLeftTrapezoid()->getLowerRightTrapezoid()){
                     trapezoid->getLowerLeftTrapezoid()->setLowerRightTrapezoid(A);
+                } else if (trapezoid == trapezoid->getLowerLeftTrapezoid()->getUpperRightTrapezoid()) {
+                    trapezoid->getLowerLeftTrapezoid()->setUpperRightTrapezoid(A);
                 }
             }
         }
 
         if (trapezoid->getUpperLeftTrapezoid() != nullptr){
             // Case where the new segment is in the UPPER right neighbor
-            if (trapezoid == trapezoid->getUpperLeftTrapezoid()->getUpperRightTrapezoid()){
-                if (endpointEqualLeftp){
-                    trapezoid->getUpperLeftTrapezoid()->setUpperRightTrapezoid(C);
-                } else {
+            if (endpointEqualLeftp){
+                trapezoid->getUpperLeftTrapezoid()->setUpperRightTrapezoid(C);
+            } else {
+                if (trapezoid == trapezoid->getUpperLeftTrapezoid()->getUpperRightTrapezoid()){
                     trapezoid->getUpperLeftTrapezoid()->setUpperRightTrapezoid(A);
+                } else if(trapezoid == trapezoid->getUpperLeftTrapezoid()->getLowerRightTrapezoid()) {
                     trapezoid->getUpperLeftTrapezoid()->setLowerRightTrapezoid(A);
                 }
             }
@@ -369,11 +371,13 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
         bool mergeableUpper, mergeableLower;
 
-        tmap::Trapezoid *A3, *B3;
+        tmap::Trapezoid *A3, *B3, *currentTrapezoid;
 
         for (auto it = tl.begin()+1; it != tl.end()-1; ++it){
             mergeableUpper = (oldUpper->getTop() == (*it)->getTop() && oldUpper->getBottom() == segmentId);
             mergeableLower = (oldLower->getTop() == segmentId && oldLower->getBottom() == (*it)->getBottom());
+
+            currentTrapezoid = *it;
 
             // Merge trapezoid
             if (mergeableUpper){
@@ -406,11 +410,29 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                                          (*it)->getRightp(),
                                          (*it)->getLeftp());
 
-                A3->Trapezoid::updateAdjacencies(oldUpper, oldUpper, nullptr, nullptr);
+                A3->Trapezoid::updateAdjacencies(oldUpper, oldUpper, currentTrapezoid->getUpperRightTrapezoid(), nullptr);
+
+                // If the currentTrapezoid has two different left neighbors, I should update the new trapezoid with the old left upper neighbor
+                if (currentTrapezoid->getLowerLeftTrapezoid() != currentTrapezoid->getUpperLeftTrapezoid()) {
+                    A3->setUpperLeftTrapezoid(currentTrapezoid->getUpperLeftTrapezoid());
+
+                    if (currentTrapezoid->getUpperLeftTrapezoid()->getUpperRightTrapezoid() == currentTrapezoid && currentTrapezoid->getUpperLeftTrapezoid()->getLowerRightTrapezoid() == currentTrapezoid) {
+                        currentTrapezoid->getUpperLeftTrapezoid()->setUpperRightTrapezoid(A3);
+                        currentTrapezoid->getUpperLeftTrapezoid()->setLowerRightTrapezoid(A3);
+                    }
+                }
 
                 // If the upperRight neighbor is null, it mean that it was deleted and it wasn't really a neighbor (##CASE A##)
-                if (oldUpper->getUpperRightTrapezoid() == nullptr) {
+                if (/*oldUpper->getUpperRightTrapezoid() == nullptr*/ oldUpper->getUpperRightTrapezoid() == currentTrapezoid) {
                     oldUpper->setUpperRightTrapezoid(A3);
+                }
+
+                // If the currentTrapezoid has two different right neighbors
+                if (currentTrapezoid->getLowerRightTrapezoid() != currentTrapezoid->getUpperRightTrapezoid()){
+                    if (currentTrapezoid->getUpperRightTrapezoid()->getUpperLeftTrapezoid() == currentTrapezoid && currentTrapezoid->getUpperRightTrapezoid()->getLowerLeftTrapezoid() == currentTrapezoid) {
+                        currentTrapezoid->getUpperRightTrapezoid()->setLowerLeftTrapezoid(A3);
+                        currentTrapezoid->getUpperRightTrapezoid()->setUpperLeftTrapezoid(A3);
+                    }
                 }
 
                 oldUpper->setLowerRightTrapezoid(A3);
