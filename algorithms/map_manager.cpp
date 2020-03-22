@@ -148,7 +148,13 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                 if (endpointEqualRightp){
                     trapezoid->getLowerRightTrapezoid()->setLowerLeftTrapezoid(C);
                 } else {
-                    trapezoid->getLowerRightTrapezoid()->setLowerLeftTrapezoid(B);
+                    if (trapezoid == trapezoid->getLowerRightTrapezoid()->getLowerLeftTrapezoid()){
+                        trapezoid->getLowerRightTrapezoid()->setLowerLeftTrapezoid(B);
+                    }
+
+                    if (trapezoid == trapezoid->getLowerRightTrapezoid()->getUpperLeftTrapezoid()){
+                        trapezoid->getLowerRightTrapezoid()->setUpperLeftTrapezoid(B);
+                    }
                 }
             }
         }
@@ -159,7 +165,13 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                 if (endpointEqualRightp){
                     trapezoid->getUpperRightTrapezoid()->setUpperLeftTrapezoid(C);
                 } else {
-                    trapezoid->getUpperRightTrapezoid()->setUpperLeftTrapezoid(B);
+                    if (trapezoid == trapezoid->getUpperRightTrapezoid()->getUpperLeftTrapezoid()){
+                        trapezoid->getUpperRightTrapezoid()->setUpperLeftTrapezoid(B);
+                    }
+
+                    if (trapezoid == trapezoid->getUpperRightTrapezoid()->getLowerLeftTrapezoid()){
+                        trapezoid->getUpperRightTrapezoid()->setLowerLeftTrapezoid(B);
+                    }
                 }
             }
         }
@@ -447,7 +459,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                 if (currentTrapezoid->getLowerLeftTrapezoid() != currentTrapezoid->getUpperLeftTrapezoid()) {
                     A3->setUpperLeftTrapezoid(currentTrapezoid->getUpperLeftTrapezoid());
 
-                    if (currentTrapezoid->getUpperLeftTrapezoid()->getUpperRightTrapezoid() == currentTrapezoid && currentTrapezoid->getUpperLeftTrapezoid()->getLowerRightTrapezoid() == currentTrapezoid) {
+                    if (currentTrapezoid->getUpperLeftTrapezoid() != nullptr && currentTrapezoid->getUpperLeftTrapezoid()->getUpperRightTrapezoid() == currentTrapezoid && currentTrapezoid->getUpperLeftTrapezoid()->getLowerRightTrapezoid() == currentTrapezoid) {
                         currentTrapezoid->getUpperLeftTrapezoid()->setUpperRightTrapezoid(A3);
                         currentTrapezoid->getUpperLeftTrapezoid()->setLowerRightTrapezoid(A3);
                     }
@@ -459,7 +471,9 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                         currentTrapezoid->getUpperRightTrapezoid()->setLowerLeftTrapezoid(A3);
                         currentTrapezoid->getUpperRightTrapezoid()->setUpperLeftTrapezoid(A3);
 
-                        if (currentTrapezoid->getLowerRightTrapezoid() != nullptr && currentTrapezoid->getLowerRightTrapezoid() != nullptr){
+                        /* SERVE? (caso due linee sopra ed una unica sotto) */
+                        currentTrapezoid->getLowerRightTrapezoid()->setUpperLeftTrapezoid(A3);
+                        if (currentTrapezoid->getLowerRightTrapezoid() != nullptr && currentTrapezoid->getLowerLeftTrapezoid() != nullptr){
                             currentTrapezoid->getLowerRightTrapezoid()->setLowerLeftTrapezoid(currentTrapezoid->getUpperLeftTrapezoid());
                             currentTrapezoid->getLowerRightTrapezoid()->setUpperLeftTrapezoid(currentTrapezoid->getLowerLeftTrapezoid());
                         }

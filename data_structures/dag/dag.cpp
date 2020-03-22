@@ -135,9 +135,10 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoi
         {
             const cg3::Segment2d &nodeSegment = trapezoidalMapDataset.getSegment(getYNode(node)->getSegmentId());
 
-            // Test if the point is equal to the endpoint
-            if(nodeSegment.p2() == segment.p1()){
-                if (segment.p1().y() < segment.p2().y()){
+            // Test if the point is equal to one endpoint
+            if(nodeSegment.p2() == segment.p1() || nodeSegment.p2() == segment.p2() || nodeSegment.p1() == segment.p1() || nodeSegment.p1() == segment.p2()){
+                // Check to see if the new segment is under or over the y-node (we can't use findPointSide because one point is equal)
+                if ((segment.p1().y() + segment.p2().y()) > (nodeSegment.p1().y() + nodeSegment.p2().y())){
                     return findPoint(node->getLeftChild(), trapezoidalMapDataset, segment);
                 } else {
                     return findPoint(node->getRightChild(), trapezoidalMapDataset, segment);
@@ -150,6 +151,8 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoi
             } else {
                 return findPoint(node->getRightChild(), trapezoidalMapDataset, segment);
             }
+
+            assert(segment.p1().x() < segment.p2().x());
         }
     }
 
