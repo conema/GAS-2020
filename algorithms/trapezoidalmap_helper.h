@@ -14,6 +14,7 @@ namespace tmap{
     bool findSlope(const cg3::Point2d &p1, const cg3::Point2d &p2);
     void orderPoint(cg3::Point2d &p1, cg3::Point2d &p2);
     cg3::Point2d leftMostPoint(cg3::Segment2d segment);
+    cg3::Point2d differentPoint(const cg3::Segment2d &segment1, const cg3::Segment2d &segment2);
 }
 
 #endif // TRAPEZOIDALMAP_HELPER_H

@@ -87,3 +87,18 @@ cg3::Point2d tmap::leftMostPoint(cg3::Segment2d segment)
     return segment.p1();
 }
 
+/**
+ * @brief Given two segments, return the first different points of segment1 between segment1 and segment2
+ * @param[in] segment1 and segment2
+ * @return the first different point
+ */
+cg3::Point2d tmap::differentPoint(const cg3::Segment2d &segment1, const cg3::Segment2d &segment2)
+{
+    if (segment1.p1() == segment2.p1() || segment1.p1() == segment2.p2()){
+        return segment1.p2();
+    } else if (segment1.p2() == segment2.p1() || segment1.p2() == segment2.p2()){
+        return segment1.p1();
+    }
+
+    return segment1.p1();
+}

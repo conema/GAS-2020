@@ -138,7 +138,7 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoi
             // Test if the point is equal to one endpoint
             if(nodeSegment.p2() == segment.p1() || nodeSegment.p2() == segment.p2() || nodeSegment.p1() == segment.p1() || nodeSegment.p1() == segment.p2()){
                 // Check to see if the new segment is under or over the y-node (we can't use findPointSide because one point is equal)
-                if ((segment.p1().y() + segment.p2().y()) > (nodeSegment.p1().y() + nodeSegment.p2().y())){
+                if (tmap::findPointSide(nodeSegment, tmap::differentPoint(segment, nodeSegment))){
                     return findPoint(node->getLeftChild(), trapezoidalMapDataset, segment);
                 } else {
                     return findPoint(node->getRightChild(), trapezoidalMapDataset, segment);
