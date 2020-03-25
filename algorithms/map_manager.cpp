@@ -262,8 +262,6 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
         const tmap::Trapezoid* trapezoidFirstEndpoint = *tl.begin();
         const tmap::Trapezoid* trapezoidSecondEndpoint = tl.back();
-        //trapezoidalMap.removeTrapezoid(tl.back());
-        //trapezoidalMap.removeTrapezoid(*tl.begin());
 
         /* -----  Left endpoint  -----  */
         // 3 new trapezoids for the left endpoint of the segment
@@ -304,11 +302,11 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
         // Update neighbors' neighbors, they are updated only if the pointers are nullptr, otherwise they are valid pointers to some trapezoids
         if (trapezoidFirstEndpoint->getLowerLeftTrapezoid() != nullptr){
-            if (trapezoidFirstEndpoint->getLowerLeftTrapezoid()->getLowerRightTrapezoid()  == nullptr && trapezoidFirstEndpoint->getLowerLeftTrapezoid()->getLowerRightTrapezoid() == trapezoidFirstEndpoint) {
+            if (trapezoidFirstEndpoint->getLowerLeftTrapezoid()->getLowerRightTrapezoid() == trapezoidFirstEndpoint) {
                 trapezoidFirstEndpoint->getLowerLeftTrapezoid()->setLowerRightTrapezoid(A1);
             }
 
-            if (trapezoidFirstEndpoint->getLowerLeftTrapezoid()->getUpperRightTrapezoid()  == nullptr && trapezoidFirstEndpoint->getLowerLeftTrapezoid()->getUpperRightTrapezoid()  == trapezoidFirstEndpoint){
+            if (trapezoidFirstEndpoint->getLowerLeftTrapezoid()->getUpperRightTrapezoid()  == trapezoidFirstEndpoint){
                 trapezoidFirstEndpoint->getLowerLeftTrapezoid()->setUpperRightTrapezoid(A1);
             }
         }
@@ -647,11 +645,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
         if (trapezoidSecondEndpoint->getUpperRightTrapezoid() != nullptr){
             if (trapezoidSecondEndpoint->getUpperRightTrapezoid()->getLowerLeftTrapezoid() == trapezoidSecondEndpoint){
-                if (mergeableUpper){
-                    trapezoidSecondEndpoint->getUpperRightTrapezoid()->setLowerLeftTrapezoid(B2);
-                } else if (mergeableLower) {
-                    //trapezoidSecondEndpoint->getUpperRightTrapezoid()->setLowerLeftTrapezoid();
-                }
+                trapezoidSecondEndpoint->getUpperRightTrapezoid()->setLowerLeftTrapezoid(B2);
             }
 
             if (trapezoidSecondEndpoint->getUpperRightTrapezoid()->getUpperLeftTrapezoid() == trapezoidSecondEndpoint){
