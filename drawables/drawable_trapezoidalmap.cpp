@@ -31,6 +31,7 @@ void DrawableTrapezoidalMap::draw() const
         }
 
 
+        /* Controlli di debug */
         if ((trapezoid->getUpperLeftTrapezoid() ==  nullptr && trapezoid->getLowerLeftTrapezoid() != nullptr) ||
                 (trapezoid->getUpperLeftTrapezoid() !=  nullptr && trapezoid->getLowerLeftTrapezoid() == nullptr) ||
                 (trapezoid->getUpperRightTrapezoid() !=  nullptr && trapezoid->getLowerRightTrapezoid() == nullptr) ||
@@ -56,6 +57,24 @@ void DrawableTrapezoidalMap::draw() const
         if (trapezoid->getLeaf() == nullptr){
             std::cerr<<trapezoid<<" "<<"nullptr node"<<std::endl;
         }
+
+        if ((trapezoid->getUpperLeftTrapezoid() != nullptr && trapezoid->getUpperLeftTrapezoid()->getUpperRightTrapezoid() != trapezoid) && (trapezoid->getUpperLeftTrapezoid() != nullptr && trapezoid->getUpperLeftTrapezoid()->getLowerRightTrapezoid() != trapezoid)){
+            std::cerr<<trapezoid<<" "<<"problema con upper left"<<std::endl;
+        }
+
+        if ((trapezoid->getLowerLeftTrapezoid() != nullptr && trapezoid->getLowerLeftTrapezoid()->getUpperRightTrapezoid() != trapezoid) && (trapezoid->getLowerLeftTrapezoid() != nullptr && trapezoid->getLowerLeftTrapezoid()->getLowerRightTrapezoid() != trapezoid)){
+            std::cerr<<trapezoid<<" "<<"problema con lower left"<<std::endl;
+        }
+
+        if ((trapezoid->getUpperRightTrapezoid() != nullptr && trapezoid->getUpperRightTrapezoid()->getUpperLeftTrapezoid() != trapezoid) && (trapezoid->getUpperRightTrapezoid() != nullptr && trapezoid->getUpperRightTrapezoid()->getLowerLeftTrapezoid() != trapezoid)){
+            std::cerr<<trapezoid<<" "<<"problema con upper Right"<<std::endl;
+        }
+
+        if ((trapezoid->getLowerRightTrapezoid() != nullptr && trapezoid->getLowerRightTrapezoid()->getUpperLeftTrapezoid() != trapezoid) && (trapezoid->getLowerRightTrapezoid()  != nullptr && trapezoid->getLowerRightTrapezoid()->getLowerLeftTrapezoid() != trapezoid)){
+            std::cerr<<trapezoid<<" "<<"problema con lower right"<<std::endl;
+        }
+
+        /* Fine controlli di debug */
 
         const cg3::Segment2d top = trapezoidalMapDataset.getSegment(trapezoid->getTop());
         const cg3::Segment2d bottom = trapezoidalMapDataset.getSegment(trapezoid->getBottom());

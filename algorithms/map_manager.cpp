@@ -400,7 +400,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
                 A3 = oldUpper;
 
-                oldUpper->setUpperRightTrapezoid(currentTrapezoid->getUpperRightTrapezoid());
+                A3->setUpperRightTrapezoid(currentTrapezoid->getUpperRightTrapezoid());
 
                 B3 = new tmap::Trapezoid(segmentId,
                                          currentTrapezoid->getBottom(),
@@ -415,10 +415,13 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                         currentTrapezoid->getLowerRightTrapezoid()->setLowerLeftTrapezoid(B3);
                         currentTrapezoid->getLowerRightTrapezoid()->setUpperLeftTrapezoid(B3);
 
-                        if (currentTrapezoid->getUpperLeftTrapezoid() != nullptr && currentTrapezoid->getLowerLeftTrapezoid() != nullptr){
+                        /*if (currentTrapezoid->getUpperLeftTrapezoid() != nullptr && currentTrapezoid->getLowerLeftTrapezoid() != nullptr){
                             currentTrapezoid->getUpperRightTrapezoid()->setLowerLeftTrapezoid(currentTrapezoid->getUpperLeftTrapezoid());
                             currentTrapezoid->getUpperRightTrapezoid()->setUpperLeftTrapezoid(currentTrapezoid->getLowerLeftTrapezoid());
-                        }
+                        }*/
+
+                        currentTrapezoid->getUpperRightTrapezoid()->setLowerLeftTrapezoid(A3);
+                        currentTrapezoid->getUpperRightTrapezoid()->setUpperLeftTrapezoid(A3);
                     }
                 }
 
@@ -428,7 +431,6 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
                         currentTrapezoid->getLowerLeftTrapezoid()->setUpperRightTrapezoid(B3);
                         currentTrapezoid->getLowerLeftTrapezoid()->setLowerRightTrapezoid(B3);
-
                         oldLower->setLowerRightTrapezoid(B3);
                 }
 
@@ -614,8 +616,12 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
             //oldUpper->setUpperRightTrapezoid(A2);
             //}
 
-            A2->setLowerLeftTrapezoid(oldUpper);
+            //A2->setLowerLeftTrapezoid(oldUpper);
             oldUpper->setLowerRightTrapezoid(A2);
+
+            if (trapezoidSecondEndpoint->getUpperLeftTrapezoid() != trapezoidSecondEndpoint->getLowerLeftTrapezoid()){
+                A2->setUpperLeftTrapezoid(trapezoidSecondEndpoint->getUpperLeftTrapezoid());
+            }
 
             // p1 of bottom is >= of p1 of top
             if (tmap::leftMostPoint(trapezoidalMapDataset.getSegment(B2->getBottom())).x() >= tmap::leftMostPoint(trapezoidalMapDataset.getSegment(B2->getTop())).x()){
@@ -623,7 +629,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
                 oldUpper->setUpperRightTrapezoid(A2);
                 A2->setUpperLeftTrapezoid(trapezoidSecondEndpoint->getUpperLeftTrapezoid());
             } else {
-                oldUpper->setUpperRightTrapezoid(trapezoidFirstEndpoint->getUpperRightTrapezoid());
+                //oldUpper->setUpperRightTrapezoid(trapezoidFirstEndpoint->getUpperRightTrapezoid());
             }
 
             trapezoidalMap.addTrapezoid(A2);
