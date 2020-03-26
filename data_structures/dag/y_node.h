@@ -10,6 +10,7 @@ namespace dag
     {
     public:
         YNode(const size_t &segmentId);
+
         size_t getSegmentId() const;
 
     private:

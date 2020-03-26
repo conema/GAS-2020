@@ -211,7 +211,10 @@ std::vector<cg3::Segment2d> TrapezoidalMapDataset::getSegments() const
 {
     std::vector<cg3::Segment2d> segments;
     for (size_t i = 0; i < indexedSegments.size(); i++) {
-        segments.push_back(getSegment(i));
+        // Do not return boundinbox segments
+        if(getSegment(i).p1().x() >= -1e+6 && getSegment(i).p2().x() <= 1e+6){
+            segments.push_back(getSegment(i));
+        }
     }
     return segments;
 }

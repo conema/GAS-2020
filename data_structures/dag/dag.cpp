@@ -95,11 +95,29 @@ void dag::Dag::deleteGraph(Node *node)
     deleteGraph(node->getLeftChild());
     deleteGraph(node->getRightChild());
 
-    Node copyNode = *node;
+    updateChildren(node, nullptr);
 
-    delete node;
+    deleteNode(node);
+}
 
-    updateChildren(&copyNode, nullptr);
+/**
+ * @brief Delete one node from the DAG
+ * @param[in] *node: pointer to a node
+ */
+void dag::Dag::deleteNode(Node *node) {
+    if (node->getNodeType() == NodeType::LEAF){
+        Leaf *leaf = Dag::getLeaf(node);
+        if (leaf->getTrapezoid() != nullptr){
+            leaf->getTrapezoid()->setLeaf(nullptr);
+        }
+
+        delete leaf;
+    } else if (node->getNodeType() == NodeType::XNODE){
+        delete Dag::getXNode(node);
+    } else if(node->getNodeType() == NodeType::YNODE){
+        delete Dag::getYNode(node);
+    }
+
     node = nullptr;
 }
 

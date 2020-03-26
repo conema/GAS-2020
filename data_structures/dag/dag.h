@@ -43,6 +43,7 @@ namespace dag
         YNode* getYNode(Node *node) const;
 
         void deleteGraph(Node *node);
+        void deleteNode(Node *node);
 
         void updateChildren(Node* oldChildren, Node* newChildren);
     private:

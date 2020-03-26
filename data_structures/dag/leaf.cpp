@@ -11,3 +11,8 @@ tmap::Trapezoid* dag::Leaf::getTrapezoid()
 {
     return trapezoid;
 }
+
+void dag::Leaf::setTrapezoid(tmap::Trapezoid* trapezoid)
+{
+    this->trapezoid = trapezoid;
+}

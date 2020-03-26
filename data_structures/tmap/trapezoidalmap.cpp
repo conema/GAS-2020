@@ -21,19 +21,28 @@ void tmap::TrapezoidalMap::initializeTrapezoids(TrapezoidalMapDataset &trapezoid
     cg3::Point2d rightp = cg3::Point2d(boundingbox, boundingbox);
 
     // Initialize Trapezoidal Map with the boundingbox trapezoid (S0), but they can't have the same x coordinates
-    cg3::Segment2d top = cg3::Segment2d(cg3::Point2d(-boundingbox-0.01, boundingbox), rightp);
-    cg3::Segment2d bottom = cg3::Segment2d(leftp, cg3::Point2d(boundingbox-0.01, -boundingbox));
+    cg3::Segment2d top = cg3::Segment2d(cg3::Point2d(-boundingbox-((double)1/boundingbox), boundingbox), rightp);
+    cg3::Segment2d bottom = cg3::Segment2d(leftp, cg3::Point2d(boundingbox+((double)1/boundingbox), -boundingbox));
 
     bool success;
 
     trapezoidalMapDataset.addSegment(top, success);
+    assert(success);
+
     trapezoidalMapDataset.addSegment(bottom, success);
+    assert(success);
 
     size_t id_top = trapezoidalMapDataset.findSegment(top, success);
+    assert(success);
+
     size_t id_bottom = trapezoidalMapDataset.findSegment(bottom, success);
+    assert(success);
 
     size_t id_leftp = trapezoidalMapDataset.findPoint(leftp, success);
+    assert(success);
+
     size_t id_rightp = trapezoidalMapDataset.findPoint(rightp, success);
+    assert(success);
 
     tmap::Trapezoid *S0 = new tmap::Trapezoid(id_top,
                      id_bottom,
@@ -53,6 +62,14 @@ void tmap::TrapezoidalMap::addTrapezoid(tmap::Trapezoid *trapezoid)
 
 void tmap::TrapezoidalMap::removeTrapezoid(tmap::Trapezoid *trapezoid)
 {  
+    if (trapezoid == nullptr){
+        return;
+    }
+
+    if (trapezoid->getLeaf() != nullptr) {
+        trapezoid->getLeaf()->setTrapezoid(nullptr);
+    }
+
     trapezoids.erase(trapezoid);
 
     if (trapezoid->getLowerLeftTrapezoid() != nullptr){

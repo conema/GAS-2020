@@ -14,7 +14,9 @@ namespace dag
     {
     public:
         Leaf(tmap::Trapezoid *trapezoid);
+
         tmap::Trapezoid* getTrapezoid();
+        void setTrapezoid(tmap::Trapezoid* trapezoid);
 
     private:
         // Pointer to the trapezoid

@@ -30,6 +30,33 @@ void DrawableTrapezoidalMap::draw() const
             glColor3ub(trapezoid->getColor().red(), trapezoid->getColor().green(), trapezoid->getColor().blue());
         }
 
+
+        if ((trapezoid->getUpperLeftTrapezoid() ==  nullptr && trapezoid->getLowerLeftTrapezoid() != nullptr) ||
+                (trapezoid->getUpperLeftTrapezoid() !=  nullptr && trapezoid->getLowerLeftTrapezoid() == nullptr) ||
+                (trapezoid->getUpperRightTrapezoid() !=  nullptr && trapezoid->getLowerRightTrapezoid() == nullptr) ||
+                (trapezoid->getUpperRightTrapezoid() ==  nullptr && trapezoid->getLowerRightTrapezoid() != nullptr)){
+            std::cerr<<trapezoid<<std::endl;
+            if (trapezoid->getUpperLeftTrapezoid() == nullptr){
+                std::cerr<<"Upper Left is null"<<std::endl;
+            }
+
+            if (trapezoid->getLowerLeftTrapezoid() == nullptr){
+                std::cerr<<"Lower Left is null"<<std::endl;
+            }
+
+            if (trapezoid->getUpperRightTrapezoid() == nullptr){
+                std::cerr<<"Upper right is null"<<std::endl;
+            }
+
+            if (trapezoid->getLowerRightTrapezoid() == nullptr){
+                std::cerr<<"Lower right is null"<<std::endl;
+            }
+        }
+
+        if (trapezoid->getLeaf() == nullptr){
+            std::cerr<<trapezoid<<" "<<"nullptr node"<<std::endl;
+        }
+
         const cg3::Segment2d top = trapezoidalMapDataset.getSegment(trapezoid->getTop());
         const cg3::Segment2d bottom = trapezoidalMapDataset.getSegment(trapezoid->getBottom());
 
