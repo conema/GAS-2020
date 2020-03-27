@@ -46,10 +46,16 @@ size_t TrapezoidalMapDataset::addSegment(const cg3::Segment2d& segment, bool& se
 {
     size_t id;
 
-    bool found;
-    findSegment(segment, found);
+    cg3::Segment2d orderedSegment = segment;
+    if (segment.p2() < segment.p1()) {
+        orderedSegment.setP1(segment.p2());
+        orderedSegment.setP2(segment.p1());
+    }
 
-    bool degenerate = segment.p1() == segment.p2();
+    bool found;
+    findSegment(orderedSegment, found);
+
+    bool degenerate = orderedSegment.p1() == orderedSegment.p2();
 
     segmentInserted = false;
     id = std::numeric_limits<size_t>::max();
@@ -58,19 +64,19 @@ size_t TrapezoidalMapDataset::addSegment(const cg3::Segment2d& segment, bool& se
         bool generalPosition = true;
 
         bool foundPoint1;
-        size_t id1 = findPoint(segment.p1(), foundPoint1);
+        size_t id1 = findPoint(orderedSegment.p1(), foundPoint1);
         bool foundPoint2;
-        size_t id2 = findPoint(segment.p2(), foundPoint2);
+        size_t id2 = findPoint(orderedSegment.p2(), foundPoint2);
 
-        if (!foundPoint1 && xCoordSet.find(segment.p1().x()) != xCoordSet.end()) {
+        if (!foundPoint1 && xCoordSet.find(orderedSegment.p1().x()) != xCoordSet.end()) {
             generalPosition = false;
         }
-        if (!foundPoint2 && xCoordSet.find(segment.p2().x()) != xCoordSet.end()) {
+        if (!foundPoint2 && xCoordSet.find(orderedSegment.p2().x()) != xCoordSet.end()) {
             generalPosition = false;
         }
 
         if (generalPosition) {
-            bool intersecting = intersectionChecker.checkIntersections(segment);
+            bool intersecting = intersectionChecker.checkIntersections(orderedSegment);
 
             if (!intersecting) {
                 segmentInserted = true;
@@ -79,13 +85,13 @@ size_t TrapezoidalMapDataset::addSegment(const cg3::Segment2d& segment, bool& se
 
                 if (!foundPoint1) {
                     bool insertedPoint1;
-                    id1 = addPoint(segment.p1(), insertedPoint1);
+                    id1 = addPoint(orderedSegment.p1(), insertedPoint1);
                     assert(insertedPoint1);
                 }
 
                 if (!foundPoint2) {
                     bool insertedPoint2;
-                    id2 = addPoint(segment.p2(), insertedPoint2);
+                    id2 = addPoint(orderedSegment.p2(), insertedPoint2);
                     assert(insertedPoint2);
                 }
                 assert(id1 != id2 && id1 < points.size() && id2 < points.size());
@@ -94,7 +100,7 @@ size_t TrapezoidalMapDataset::addSegment(const cg3::Segment2d& segment, bool& se
 
                 segmentMap.insert(std::make_pair(IndexedSegment2d(id1, id2), id));
 
-                intersectionChecker.insert(segment);
+                intersectionChecker.insert(orderedSegment);
             }
         }
     }
@@ -211,7 +217,6 @@ std::vector<cg3::Segment2d> TrapezoidalMapDataset::getSegments() const
 {
     std::vector<cg3::Segment2d> segments;
     for (size_t i = 0; i < indexedSegments.size(); i++) {
-        // Do not return boundinbox segments
         if(getSegment(i).p1().x() >= -1e+6 && getSegment(i).p2().x() <= 1e+6){
             segments.push_back(getSegment(i));
         }
