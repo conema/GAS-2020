@@ -199,7 +199,14 @@ void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& seg
     //already in the structure. You could use it for your trapezoidal map to make it more
     //efficient in memory. However, depending on how you implement your algorithms and data 
 	//structures, you could save directly the point (Point2d) in each trapezoid (it is fine).
-    tbuild::buildMap(segment, drawableTrapezoidalMap, drawableTrapezoidalMapDataset, dag);
+
+    cg3::Segment2d orderedSegment = segment;
+    if (segment.p2() < segment.p1()) {
+        orderedSegment.setP1(segment.p2());
+        orderedSegment.setP2(segment.p1());
+    }
+
+    tbuild::buildMap(orderedSegment, drawableTrapezoidalMap, drawableTrapezoidalMapDataset, dag);
 
     //#####################################################################
 }
