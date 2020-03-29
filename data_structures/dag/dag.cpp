@@ -127,7 +127,7 @@ void dag::Dag::deleteNode(Node *node) {
  * @param[in] *trapezoidalMapDataset: the trapezoidal map dataset to find points and segments
  * @param[in] &segment: the point to search
  */
-dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoidalMapDataset, const cg3::Segment2d &segment) const
+dag::Leaf *dag::Dag::findPoint(Node *node, const tmap::TrapezoidalMap &trapezoidalMap, const cg3::Segment2d &segment) const
 {
     if (node == nullptr){
         return nullptr;
@@ -139,35 +139,35 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoi
             return getLeaf(node);
         case dag::NodeType::XNODE:
         {
-            const cg3::Point2d &nodePoint = trapezoidalMapDataset.getPoint(getXNode(node)->getPointId());
+            const cg3::Point2d &nodePoint = trapezoidalMap.getPoint(getXNode(node)->getPointId());
 
             // Test if the point is on the left or on the right of nodePoint
             if (nodePoint.x() > segment.p1().x()){
-                return findPoint(node->getLeftChild(), trapezoidalMapDataset, segment);
+                return findPoint(node->getLeftChild(), trapezoidalMap, segment);
             } else {
-                return findPoint(node->getRightChild(), trapezoidalMapDataset, segment);
+                return findPoint(node->getRightChild(), trapezoidalMap, segment);
             }
             break;
         }
         case dag::NodeType::YNODE:
         {
-            const cg3::Segment2d &nodeSegment = trapezoidalMapDataset.getSegment(getYNode(node)->getSegmentId());
+            const cg3::Segment2d &nodeSegment = trapezoidalMap.getSegment(getYNode(node)->getSegmentId());
 
             // Test if the point is equal to one endpoint
             if(nodeSegment.p2() == segment.p1() || nodeSegment.p2() == segment.p2() || nodeSegment.p1() == segment.p1() || nodeSegment.p1() == segment.p2()){
                 // Check to see if the new segment is under or over the y-node (we can't use findPointSide because one point is equal)
                 if (tmap::findPointSide(nodeSegment, tmap::differentPoint(segment, nodeSegment))){
-                    return findPoint(node->getLeftChild(), trapezoidalMapDataset, segment);
+                    return findPoint(node->getLeftChild(), trapezoidalMap, segment);
                 } else {
-                    return findPoint(node->getRightChild(), trapezoidalMapDataset, segment);
+                    return findPoint(node->getRightChild(), trapezoidalMap, segment);
                 }
             }
 
             // Test if the point is on the left or on the right of nodePoint
             if(tmap::findPointSide(nodeSegment, segment.p1())){
-                return findPoint(node->getLeftChild(), trapezoidalMapDataset, segment);
+                return findPoint(node->getLeftChild(), trapezoidalMap, segment);
             } else {
-                return findPoint(node->getRightChild(), trapezoidalMapDataset, segment);
+                return findPoint(node->getRightChild(), trapezoidalMap, segment);
             }
 
             assert(segment.p1().x() < segment.p2().x());
@@ -175,6 +175,8 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const TrapezoidalMapDataset &trapezoi
     }
 
     // Never reachable
+    assert(false);
+
     return nullptr;
 }
 

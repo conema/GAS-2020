@@ -16,8 +16,7 @@
 class DrawableTrapezoidalMap : public tmap::TrapezoidalMap, public cg3::DrawableObject
 {
 public:
-    DrawableTrapezoidalMap(const int &boundingbox, TrapezoidalMapDataset &trapezoidalMapDataset);
-    DrawableTrapezoidalMap& operator = (DrawableTrapezoidalMap other);
+    DrawableTrapezoidalMap(const int &boundingbox);
 
     cg3::Point3d sceneCenter() const;
     double sceneRadius() const;
@@ -27,8 +26,6 @@ public:
     void setHighlightedTrapezoid(tmap::Trapezoid *value);
 
 private:
-    TrapezoidalMapDataset &trapezoidalMapDataset;
-
     tmap::Trapezoid* highlightedTrapezoid;
 };
 

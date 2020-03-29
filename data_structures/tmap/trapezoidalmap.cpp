@@ -13,35 +13,35 @@ tmap::TrapezoidalMap::~TrapezoidalMap()
     removeTrapezoids();
 }
 
-void tmap::TrapezoidalMap::initializeTrapezoids(TrapezoidalMapDataset &trapezoidalMapDataset)
+void tmap::TrapezoidalMap::initializeTrapezoids()
 {
     const int &boundingbox = getBoundingBox().lengthX()/2;
 
     cg3::Point2d leftp = cg3::Point2d(-boundingbox, -boundingbox);
     cg3::Point2d rightp = cg3::Point2d(boundingbox, boundingbox);
 
-    // Initialize Trapezoidal Map with the boundingbox trapezoid (S0), but they can't have the same x coordinates
-    cg3::Segment2d top = cg3::Segment2d(cg3::Point2d(-boundingbox-((double)1/boundingbox), boundingbox), rightp);
-    cg3::Segment2d bottom = cg3::Segment2d(leftp, cg3::Point2d(boundingbox+((double)1/boundingbox), -boundingbox));
+    // Initialize Trapezoidal Map with the boundingbox trapezoid (S0)
+    cg3::Segment2d top = cg3::Segment2d(cg3::Point2d(-boundingbox, boundingbox), rightp);
+    cg3::Segment2d bottom = cg3::Segment2d(leftp, cg3::Point2d(boundingbox, -boundingbox));
 
     bool success;
 
-    trapezoidalMapDataset.addSegment(top, success);
+    addSegment(top, success);
     assert(success);
 
-    trapezoidalMapDataset.addSegment(bottom, success);
+    addSegment(bottom, success);
     assert(success);
 
-    size_t id_top = trapezoidalMapDataset.findSegment(top, success);
+    size_t id_top = findSegment(top, success);
     assert(success);
 
-    size_t id_bottom = trapezoidalMapDataset.findSegment(bottom, success);
+    size_t id_bottom = findSegment(bottom, success);
     assert(success);
 
-    size_t id_leftp = trapezoidalMapDataset.findPoint(leftp, success);
+    size_t id_leftp = findPoint(leftp, success);
     assert(success);
 
-    size_t id_rightp = trapezoidalMapDataset.findPoint(rightp, success);
+    size_t id_rightp = findPoint(rightp, success);
     assert(success);
 
     tmap::Trapezoid *S0 = new tmap::Trapezoid(id_top,
@@ -133,4 +133,150 @@ void tmap::TrapezoidalMap::removeTrapezoids()
     }
 
     trapezoids.clear();
+
+    points.clear();
+    indexedSegments.clear();
+    pointMap.clear();
+    segmentMap.clear();
 }
+
+size_t tmap::TrapezoidalMap::addPoint(const cg3::Point2d& point, bool& pointInserted)
+{
+    bool found;
+    size_t id = findPoint(point, found);
+
+    pointInserted = false;
+    if (!found){
+        pointInserted = true;
+        id = points.size();
+
+        //Add point
+        points.push_back(point);
+        pointMap.insert(std::make_pair(point, id));
+    }
+
+    return id;
+}
+
+size_t tmap::TrapezoidalMap::addSegment(const cg3::Segment2d& segment, bool& segmentInserted)
+{
+    size_t id;
+    bool found;
+
+    cg3::Segment2d orderedSegment = segment;
+    if (segment.p2() < segment.p1()) {
+        orderedSegment.setP1(segment.p2());
+        orderedSegment.setP2(segment.p1());
+    }
+
+    findSegment(orderedSegment, found);
+
+    id = std::numeric_limits<size_t>::max();
+
+    segmentInserted = false;
+    if (!found) {
+        bool foundPoint1;
+        size_t id1 = findPoint(orderedSegment.p1(), foundPoint1);
+        bool foundPoint2;
+        size_t id2 = findPoint(orderedSegment.p2(), foundPoint2);
+
+        segmentInserted = true;
+
+        id = indexedSegments.size();
+
+        if (!foundPoint1) {
+            bool insertedPoint1;
+            id1 = addPoint(orderedSegment.p1(), insertedPoint1);
+            assert(insertedPoint1);
+        }
+
+        if (!foundPoint2) {
+            bool insertedPoint2;
+            id2 = addPoint(orderedSegment.p2(), insertedPoint2);
+            assert(insertedPoint2);
+        }
+
+        IndexedSegment2d indexedSegment(id1, id2);
+        if (indexedSegment.second < indexedSegment.first) {
+            std::swap(indexedSegment.first, indexedSegment.second);
+        }
+
+        indexedSegments.push_back(indexedSegment);
+
+        segmentMap.insert(std::make_pair(indexedSegment, id));
+    }
+
+    return id;
+}
+
+size_t tmap::TrapezoidalMap::findPoint(const cg3::Point2d &point, bool &found)
+{
+    std::unordered_map<cg3::Point2d, size_t>::iterator it = pointMap.find(point);
+
+    //Point already in the data structure
+    if (it != pointMap.end()) {
+        found = true;
+        return it->second;
+    }
+    //Point not in the data structure
+    else {
+        found = false;
+        return std::numeric_limits<size_t>::max();
+    }
+}
+
+size_t tmap::TrapezoidalMap::findSegment(const cg3::Segment2d& segment, bool& found)
+{
+    found = false;
+
+    cg3::Segment2d orderedSegment = segment;
+    if (segment.p2() < segment.p1()) {
+        orderedSegment.setP1(segment.p2());
+        orderedSegment.setP2(segment.p1());
+    }
+
+    bool foundPoint1;
+    size_t id1 = findPoint(orderedSegment.p1(), foundPoint1);
+    if (!foundPoint1)
+        return std::numeric_limits<size_t>::max();
+
+    bool foundPoint2;
+    size_t id2 = findPoint(orderedSegment.p2(), foundPoint2);
+    if (!foundPoint2)
+        return std::numeric_limits<size_t>::max();
+
+    return findIndexedSegment(IndexedSegment2d(id1, id2), found);
+}
+
+size_t tmap::TrapezoidalMap::findIndexedSegment(const IndexedSegment2d& indexedSegment, bool& found)
+{
+    IndexedSegment2d orderedIndexedSegment = indexedSegment;
+    if (indexedSegment.second < indexedSegment.first) {
+        orderedIndexedSegment.first = indexedSegment.second;
+        orderedIndexedSegment.second = indexedSegment.first;
+    }
+
+    std::unordered_map<IndexedSegment2d, size_t>::iterator it = segmentMap.find(orderedIndexedSegment);
+
+    //Segment already in the data structure
+    if (it != segmentMap.end()) {
+        found = true;
+        return it->second;
+    }
+    //Segment not in the data structure
+    else {
+        found = false;
+        return std::numeric_limits<size_t>::max();
+    }
+}
+
+const cg3::Point2d& tmap::TrapezoidalMap::getPoint(size_t id) const
+{
+    return points[id];
+}
+
+cg3::Segment2d tmap::TrapezoidalMap::getSegment(size_t id) const
+{
+    return cg3::Segment2d(points[indexedSegments[id].first], points[indexedSegments[id].second]);
+}
+

@@ -5,7 +5,7 @@
 #include <cg3/geometry/segment2.h>
 #include <cg3/geometry/point2.h>
 #include <data_structures/tmap/trapezoid.h>
-#include <data_structures/trapezoidalmap_dataset.h>
+#include <data_structures/tmap/trapezoidalmap.h>
 #include <algorithms/trapezoidalmap_helper.h>
 #include "node.h"
 #include "leaf.h"
@@ -32,7 +32,7 @@ namespace dag
         void swap(Dag& other);
 
         Leaf* findPoint(Node *node,
-                       const TrapezoidalMapDataset &trapezoidalMapDataset,
+                       const tmap::TrapezoidalMap &trapezoidalMap,
                        const cg3::Segment2d &segment) const;
 
         void setRoot(Node *value);

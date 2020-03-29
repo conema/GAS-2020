@@ -13,28 +13,47 @@ namespace tmap
     {
     public:
         typedef std::unordered_set<tmap::Trapezoid*> Trapezoids;
+        typedef std::pair<size_t, size_t> IndexedSegment2d;
 
         TrapezoidalMap(const int &boundingbox);
         //TrapezoidalMap(const TrapezoidalMap&) = delete;
         //TrapezoidalMap& operator=(const TrapezoidalMap&) = delete;
         ~TrapezoidalMap();
 
-        void initializeTrapezoids(TrapezoidalMapDataset &trapezoidalMapDataset);
+        void initializeTrapezoids();
 
+        // Trapezoids Methods
         void addTrapezoid(tmap::Trapezoid *trapezoid);
         void removeTrapezoid(tmap::Trapezoid *trapezoid);
+        void removeTrapezoids();
         const tmap::Trapezoid& firstTrapezoid() const;
 
+        // Boundingbox Mathods
         const cg3::BoundingBox2& getBoundingBox() const;
         const Trapezoids& getTrapezoids() const;
 
-        void removeTrapezoids();
+
+        // Segment and points method
+        size_t addPoint(const cg3::Point2d& point, bool& pointInserted);
+        size_t addSegment(const cg3::Segment2d& segment, bool& segmentInserted);
+
+        size_t findPoint(const cg3::Point2d& point, bool& found);
+        size_t findSegment(const cg3::Segment2d& segment, bool& found);
+        size_t findIndexedSegment(const IndexedSegment2d &indexedSegment, bool &found);
+
+        const cg3::Point2d& getPoint(size_t id) const;
+        cg3::Segment2d getSegment(size_t id) const;
     private:
-        // To store all the trapezoids
+        // To store the trapezoids
         Trapezoids trapezoids;
 
         // The trapezoidmap occupy all the external boundingbox
         cg3::BoundingBox2 boundingBox;
+        std::unordered_map<cg3::Point2d, size_t> pointMap;
+        std::unordered_map<IndexedSegment2d, size_t> segmentMap;
+
+        std::vector<cg3::Point2d> points;
+        std::vector<IndexedSegment2d> indexedSegments;
     };
 }
 

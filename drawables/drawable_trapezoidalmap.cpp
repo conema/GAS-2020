@@ -2,18 +2,10 @@
 
 #include <cg3/viewer/opengl_objects/opengl_objects2.h>
 
-DrawableTrapezoidalMap::DrawableTrapezoidalMap(const int &boundingbox, TrapezoidalMapDataset &trapezoidalMapDataset) :
+DrawableTrapezoidalMap::DrawableTrapezoidalMap(const int &boundingbox) :
     TrapezoidalMap(boundingbox),
-    trapezoidalMapDataset(trapezoidalMapDataset),
     highlightedTrapezoid(nullptr)
 {
-}
-
-
-DrawableTrapezoidalMap &DrawableTrapezoidalMap::operator =(DrawableTrapezoidalMap other){
-    trapezoidalMapDataset = other.trapezoidalMapDataset;
-
-    return *this;
 }
 
 void DrawableTrapezoidalMap::draw() const
@@ -76,11 +68,11 @@ void DrawableTrapezoidalMap::draw() const
 
         /* Fine controlli di debug */
 
-        const cg3::Segment2d top = trapezoidalMapDataset.getSegment(trapezoid->getTop());
-        const cg3::Segment2d bottom = trapezoidalMapDataset.getSegment(trapezoid->getBottom());
+        const cg3::Segment2d top = getSegment(trapezoid->getTop());
+        const cg3::Segment2d bottom = getSegment(trapezoid->getBottom());
 
-        const cg3::Point2d leftp = trapezoidalMapDataset.getPoint(trapezoid->getLeftp());
-        const cg3::Point2d rightp = trapezoidalMapDataset.getPoint(trapezoid->getRightp());
+        const cg3::Point2d leftp = getPoint(trapezoid->getLeftp());
+        const cg3::Point2d rightp = getPoint(trapezoid->getRightp());
 
         cg3::Point2d bottomLeftIntersection = tmap::findIntersectionPoint(bottom, leftp);
         cg3::Point2d bottomRightIntersection = tmap::findIntersectionPoint(bottom, rightp);

@@ -38,7 +38,7 @@ TrapezoidalMapManager::TrapezoidalMapManager(QWidget *parent) :
     firstPointSelectedColor(220, 80, 80),
     firstPointSelectedSize(5),
     isFirstPointSelected(false),
-    drawableTrapezoidalMap(BOUNDINGBOX, drawableTrapezoidalMapDataset),
+    drawableTrapezoidalMap(BOUNDINGBOX),
     dag()
 {
     //NOTE 1: you probably need to initialize some objects in the constructor. You
@@ -200,13 +200,7 @@ void TrapezoidalMapManager::addSegmentToTrapezoidalMap(const cg3::Segment2d& seg
     //efficient in memory. However, depending on how you implement your algorithms and data 
 	//structures, you could save directly the point (Point2d) in each trapezoid (it is fine).
 
-    cg3::Segment2d orderedSegment = segment;
-    if (segment.p2() < segment.p1()) {
-        orderedSegment.setP1(segment.p2());
-        orderedSegment.setP2(segment.p1());
-    }
-
-    tbuild::buildMap(orderedSegment, drawableTrapezoidalMap, drawableTrapezoidalMapDataset, dag);
+    tbuild::buildMap(segment, drawableTrapezoidalMap, dag);
 
     //#####################################################################
 }
@@ -256,7 +250,7 @@ void TrapezoidalMapManager::queryTrapezoidalMap(const cg3::Point2d& queryPoint)
     //to do that).
 
     // Get trapezoid from dag and highlighten it on the drawable map
-    dag::Leaf* leafTrapezoid = dag.findPoint(dag.getRoot(), drawableTrapezoidalMapDataset, cg3::Segment2d(queryPoint, 0));
+    dag::Leaf* leafTrapezoid = dag.findPoint(dag.getRoot(), drawableTrapezoidalMap, cg3::Segment2d(queryPoint, 0));
 
     // It can be null if someone try to query the empty map with no trapezoids
     if (leafTrapezoid != nullptr){
