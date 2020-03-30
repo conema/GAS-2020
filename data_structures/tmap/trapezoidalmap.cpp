@@ -13,6 +13,9 @@ tmap::TrapezoidalMap::~TrapezoidalMap()
     removeTrapezoids();
 }
 
+/**
+ * @brief Initialize the trapezoid map by creating two fake segment for the top and the bottom and a trapezoid for the bounding box
+ */
 void tmap::TrapezoidalMap::initializeTrapezoids()
 {
     const int &boundingbox = getBoundingBox().lengthX()/2;
@@ -55,11 +58,19 @@ void tmap::TrapezoidalMap::initializeTrapezoids()
     addTrapezoid(S0);
 }
 
+/**
+ * @brief add a new trapezoid to the map
+ * @param trapezoid
+ */
 void tmap::TrapezoidalMap::addTrapezoid(tmap::Trapezoid *trapezoid)
 {
     trapezoids.insert(trapezoid);
 }
 
+/**
+ * @brief remove a trapezoid from the map and set its neighbors to him pointers to nullptr
+ * @param[in] trapezoid
+ */
 void tmap::TrapezoidalMap::removeTrapezoid(tmap::Trapezoid *trapezoid)
 {  
     if (trapezoid == nullptr){
@@ -113,9 +124,12 @@ void tmap::TrapezoidalMap::removeTrapezoid(tmap::Trapezoid *trapezoid)
     }
 
     delete trapezoid;
-    trapezoid = nullptr;
 }
 
+/**
+ * @brief get the boundingbox of the map
+ * @return the bounding box
+ */
 const cg3::BoundingBox2& tmap::TrapezoidalMap::getBoundingBox() const
 {
     return boundingBox;
@@ -126,6 +140,9 @@ const tmap::TrapezoidalMap::Trapezoids &tmap::TrapezoidalMap::getTrapezoids() co
     return trapezoids;
 }
 
+/**
+ * @brief Remove all the trapezoids of the map, segments and points included
+ */
 void tmap::TrapezoidalMap::removeTrapezoids()
 {
     for (const auto& trapezoid: trapezoids) {
@@ -140,6 +157,12 @@ void tmap::TrapezoidalMap::removeTrapezoids()
     segmentMap.clear();
 }
 
+/**
+ * @brief add a new point to the pointMap and assign the id to the point
+ * @param[in] point
+ * @param pointInserted
+ * @return the point id
+ */
 size_t tmap::TrapezoidalMap::addPoint(const cg3::Point2d& point, bool& pointInserted)
 {
     bool found;
@@ -158,6 +181,12 @@ size_t tmap::TrapezoidalMap::addPoint(const cg3::Point2d& point, bool& pointInse
     return id;
 }
 
+/**
+ * @brief add a new segment to the segmentMap and assign the id to the segment
+ * @param segment
+ * @param segmentInserted
+ * @return the id of the segment
+ */
 size_t tmap::TrapezoidalMap::addSegment(const cg3::Segment2d& segment, bool& segmentInserted)
 {
     size_t id;
@@ -209,6 +238,12 @@ size_t tmap::TrapezoidalMap::addSegment(const cg3::Segment2d& segment, bool& seg
     return id;
 }
 
+/**
+ * @brief find the point in the map and return its id
+ * @param point
+ * @param found
+ * @return the point id
+ */
 size_t tmap::TrapezoidalMap::findPoint(const cg3::Point2d &point, bool &found)
 {
     std::unordered_map<cg3::Point2d, size_t>::iterator it = pointMap.find(point);
@@ -225,6 +260,12 @@ size_t tmap::TrapezoidalMap::findPoint(const cg3::Point2d &point, bool &found)
     }
 }
 
+/**
+ * @brief find the segment in the map and return its id
+ * @param segment
+ * @param found
+ * @return the segment id
+ */
 size_t tmap::TrapezoidalMap::findSegment(const cg3::Segment2d& segment, bool& found)
 {
     found = false;
@@ -248,6 +289,12 @@ size_t tmap::TrapezoidalMap::findSegment(const cg3::Segment2d& segment, bool& fo
     return findIndexedSegment(IndexedSegment2d(id1, id2), found);
 }
 
+/**
+ * @brief find an indexed segment and return the id
+ * @param indexedSegment
+ * @param found
+ * @return the id of the indexed segment
+ */
 size_t tmap::TrapezoidalMap::findIndexedSegment(const IndexedSegment2d& indexedSegment, bool& found)
 {
     IndexedSegment2d orderedIndexedSegment = indexedSegment;
@@ -270,11 +317,21 @@ size_t tmap::TrapezoidalMap::findIndexedSegment(const IndexedSegment2d& indexedS
     }
 }
 
+/**
+ * @brief get the point by the id
+ * @param id
+ * @return the point
+ */
 const cg3::Point2d& tmap::TrapezoidalMap::getPoint(size_t id) const
 {
     return points[id];
 }
 
+/**
+ * @brief get the segment by the id
+ * @param id
+ * @return the point
+ */
 cg3::Segment2d tmap::TrapezoidalMap::getSegment(size_t id) const
 {
     return cg3::Segment2d(points[indexedSegments[id].first], points[indexedSegments[id].second]);

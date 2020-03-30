@@ -253,9 +253,10 @@ void TrapezoidalMapManager::queryTrapezoidalMap(const cg3::Point2d& queryPoint)
     dag::Leaf* leafTrapezoid = dag.findPoint(dag.getRoot(), drawableTrapezoidalMap, cg3::Segment2d(queryPoint, 0));
 
     // It can be null if someone try to query the empty map with no trapezoids
+
     if (leafTrapezoid != nullptr){
         drawableTrapezoidalMap.setHighlightedTrapezoid(leafTrapezoid->getTrapezoid());
-
+#ifdef  QT_DEBUG
         std::cout<<leafTrapezoid->getTrapezoid()<<std::endl;
         std::cout<<"Left Upper: "<<leafTrapezoid->getTrapezoid()->getUpperLeftTrapezoid()<<std::endl;
         std::cout<<"Left lower: "<<leafTrapezoid->getTrapezoid()->getLowerLeftTrapezoid()<<std::endl;
@@ -263,7 +264,9 @@ void TrapezoidalMapManager::queryTrapezoidalMap(const cg3::Point2d& queryPoint)
         std::cout<<"Right lower: "<<leafTrapezoid->getTrapezoid()->getLowerRightTrapezoid()<<std::endl;
 
         std::cout<<"Point: "<<queryPoint<<std::endl;
+#endif
     }
+
 
     //#####################################################################
 }

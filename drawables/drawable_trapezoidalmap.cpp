@@ -8,6 +8,9 @@ DrawableTrapezoidalMap::DrawableTrapezoidalMap(const int &boundingbox) :
 {
 }
 
+/**
+ * @brief Draw the trapezoidal map
+ */
 void DrawableTrapezoidalMap::draw() const
 {
     //assert(findIntersectionPoint(cg3::Segment2d(cg3::Point2d(2, 5), cg3::Point2d(8, 3)), cg3::Point2d(1, 2)).y() == -8);
@@ -17,6 +20,7 @@ void DrawableTrapezoidalMap::draw() const
 
     for (const auto& trapezoid: getTrapezoids()) {
         if (trapezoid != nullptr && trapezoid == getHighlightedTrapezoid()){
+            // If the trapezoid is the highlighted one, color it in blue
             glColor3ub(0, 0, 255);
         } else {
             glColor3ub(trapezoid->getColor().red(), trapezoid->getColor().green(), trapezoid->getColor().blue());
@@ -24,6 +28,7 @@ void DrawableTrapezoidalMap::draw() const
 
 
         /* Controlli di debug */
+#ifdef  QT_DEBUG
         if ((trapezoid->getUpperLeftTrapezoid() ==  nullptr && trapezoid->getLowerLeftTrapezoid() != nullptr) ||
                 (trapezoid->getUpperLeftTrapezoid() !=  nullptr && trapezoid->getLowerLeftTrapezoid() == nullptr) ||
                 (trapezoid->getUpperRightTrapezoid() !=  nullptr && trapezoid->getLowerRightTrapezoid() == nullptr) ||
@@ -65,7 +70,7 @@ void DrawableTrapezoidalMap::draw() const
         if ((trapezoid->getLowerRightTrapezoid() != nullptr && trapezoid->getLowerRightTrapezoid()->getUpperLeftTrapezoid() != trapezoid) && (trapezoid->getLowerRightTrapezoid()  != nullptr && trapezoid->getLowerRightTrapezoid()->getLowerLeftTrapezoid() != trapezoid)){
             std::cerr<<trapezoid<<" "<<"problema con lower right"<<std::endl;
         }
-
+#endif
         /* Fine controlli di debug */
 
         const cg3::Segment2d top = getSegment(trapezoid->getTop());
@@ -88,27 +93,25 @@ void DrawableTrapezoidalMap::draw() const
           glVertex2d(topLeftIntersection.x(), topLeftIntersection.y());
         glEnd();
 
-        // Draw trapezoid boundary
+        // Draw trapezoid boundary (lines)
         cg3::opengl::drawLine2(topLeftIntersection, bottomLeftIntersection, cg3::Color(255, 0, 0), 3);
         cg3::opengl::drawLine2(topRightIntersection, bottomRightIntersection, cg3::Color(255, 0, 0), 3);
-
-        #if YESDEBUG
-            // Debug point of trapezoids
-            glBegin(GL_POINTS);
-                glColor3ub(255, 0, 0); glVertex2d(bottomLeftIntersection.x(), bottomLeftIntersection.y());      //red
-                glColor3ub(225, 255, 0); glVertex2d(bottomRightIntersection.x(), bottomRightIntersection.y());  //yellow
-                glColor3ub(0, 247, 255); glVertex2d(topRightIntersection.x(), topRightIntersection.y());        //blue
-                glColor3ub(217, 0, 255); glVertex2d(topLeftIntersection.x(), topLeftIntersection.y());          //purple
-            glEnd();
-        #endif
     }
 }
 
+/**
+ * @brief get the current highlighted trapezoid
+ * @return a trapezoid
+ */
 tmap::Trapezoid *DrawableTrapezoidalMap::getHighlightedTrapezoid() const
 {
     return highlightedTrapezoid;
 }
 
+/**
+ * @brief set the current highlighted trapezoid
+ * @param value
+ */
 void DrawableTrapezoidalMap::setHighlightedTrapezoid(tmap::Trapezoid *value)
 {
     highlightedTrapezoid = value;

@@ -17,7 +17,7 @@ cg3::Point2d tmap::findIntersectionPoint(const cg3::Segment2d &s, const cg3::Poi
 /**
  * @brief Generate a random pastel color
  * @param[in] startColor: base color to start generation
- * @return random color
+ * @return a random pastel color
  */
 cg3::Color tmap::generateColor(const cg3::Color &startColor){
     int red = rand()%256;
@@ -49,33 +49,21 @@ bool tmap::findPointSide(const cg3::Segment2d &s, const cg3::Point2d &p)
 }
 
 /**
- * @brief Return true if the slope of a segment is positive
- * @param[in] p1
- * @param[in] p2
- * @return true if the the slope is positive, else otherwise
- */
-bool tmap::findSlope(const cg3::Point2d &p1, const cg3::Point2d &p2)
-{
-    //return (((p2.y()-p1.y())/(p2.x()-p1.x())) > 0);
-    return p2.x()>p1.x();
-}
-
-/**
- * @brief Order two point
+ * @brief order two point
  * @param[in] p1
  * @param[in] p2
  * @return p1 will contain the leftmost point and p2 will containt the righmost
  */
 void tmap::orderPoint(cg3::Point2d &p1, cg3::Point2d &p2)
 {
-    if (!findSlope(p1, p2)){
+    if (p1.x()>p2.x()){
         std::swap(p2, p1);
    }
 }
 
 /**
  * @brief return the leftmost point of a segment
- * @param[in] segment
+ * @param[in] a segment
  * @return the leftmost point
  */
 cg3::Point2d tmap::leftMostPoint(cg3::Segment2d segment)

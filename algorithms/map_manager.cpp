@@ -2,7 +2,9 @@
 
 /**
  * @brief Insert a new segment into the TrapezoidalMap and the DAG
- * @param[in] segment: segment
+ * @param segment
+ * @param trapezoidalMap
+ * @param dag
  */
 void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trapezoidalMap, dag::Dag &dag)
 {
@@ -737,9 +739,9 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
 
 /**
  * @brief Find the list of trapezoids intersected by a segment
- * @param[in] trapezoidalMap
  * @param[in] dag
  * @param[in] segment
+ * @param[in] trapezoidalMap
  * @return a set of intersected trapezoids
  */
 std::vector<tmap::Trapezoid*> tbuild::followSegment(const dag::Dag &dag,

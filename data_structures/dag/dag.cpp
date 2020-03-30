@@ -57,26 +57,49 @@ dag::Dag::Dag(dag::Dag &&in)
     in.root = nullptr;
 }
 
+/**
+ * @brief set the root of the DAG
+ * @param value
+ */
 void dag::Dag::setRoot(Node *value)
 {
     root = value;
 }
 
+/**
+ * @brief get the root of the DAG
+ * @return a node
+ */
 dag::Node *dag::Dag::getRoot() const
 {
     return root;
 }
 
+/**
+ * @brief cast the node to #Leaf
+ * @param node
+ * @return a #Leaf
+ */
 dag::Leaf *dag::Dag::getLeaf(dag::Node *node) const
 {
     return reinterpret_cast<dag::Leaf*>(node);
 }
 
+/**
+ * @brief cast the node to #XNode
+ * @param node
+ * @return an #XNode
+ */
 dag::XNode *dag::Dag::getXNode(dag::Node *node) const
 {
     return reinterpret_cast<dag::XNode*>(node);
 }
 
+/**
+ * @brief cast the node to #YNode
+ * @param node
+ * @return an #YNode
+ */
 dag::YNode *dag::Dag::getYNode(dag::Node *node) const
 {
     return reinterpret_cast<dag::YNode*>(node);
@@ -117,15 +140,14 @@ void dag::Dag::deleteNode(Node *node) {
     } else if(node->getNodeType() == NodeType::YNODE){
         delete Dag::getYNode(node);
     }
-
-    node = nullptr;
 }
 
 /**
  * @brief Find a point into a trapezoid
  * @param[in] *node: pointer to a node
- * @param[in] *trapezoidalMapDataset: the trapezoidal map dataset to find points and segments
+ * @param[in] *trapezoidalMap: the trapezoidal map to find points and segments
  * @param[in] &segment: the point to search
+ * @return the found leaf
  */
 dag::Leaf *dag::Dag::findPoint(Node *node, const tmap::TrapezoidalMap &trapezoidalMap, const cg3::Segment2d &segment) const
 {
@@ -181,10 +203,9 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const tmap::TrapezoidalMap &trapezoid
 }
 
 /**
- * @brief Update the children
- * @param[in] fathers : a list of fathers
- * @param[in] oldChildren : the children to substitute
- * @param[in] newChildren : the substitute
+ * @brief Update the children of a #Node
+ * @param[in] oldChildren: the children to substitute
+ * @param[in] newChildren: the substitute
  */
 void dag::Dag::updateChildren(dag::Node* oldChildren, dag::Node* newChildren){
     for (const auto& father: oldChildren->getFathers()){

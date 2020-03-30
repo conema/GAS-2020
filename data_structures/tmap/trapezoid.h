@@ -7,8 +7,6 @@
 #include <data_structures/dag/leaf.h>
 #include <algorithms/trapezoidalmap_helper.h>
 
-#define YESDEBUG false
-
 /**
  * @brief This class represent a trapezoid
  */
