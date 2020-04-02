@@ -24,7 +24,7 @@ namespace tmap
 
         // Trapezoids Methods
         void addTrapezoid(tmap::Trapezoid *trapezoid);
-        void removeTrapezoid(tmap::Trapezoid *trapezoid);
+        void removeTrapezoid(Trapezoid *trapezoid);
         void removeTrapezoids();
         const tmap::Trapezoid& firstTrapezoid() const;
 
