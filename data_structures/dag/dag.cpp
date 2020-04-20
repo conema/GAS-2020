@@ -28,6 +28,8 @@ void dag::Dag::initializeDag(dag::Leaf *node)
     root = node;
 }
 
+
+// Rule of 5
 void dag::Dag::swap(dag::Dag &other)
 {
     using std::swap;
@@ -37,13 +39,15 @@ void dag::Dag::swap(dag::Dag &other)
 dag::Dag::Dag(const dag::Dag &dag)
 {
     root = new Node(*(dag.root));
+
+    // Completare
 }
 
-/*dag::Dag &dag::Dag::operator =(dag::Dag other)
+dag::Dag &dag::Dag::operator =(dag::Dag other)
 {
     swap(other);
     return *this;
-}*/
+}
 
 dag::Dag &dag::Dag::operator =(dag::Dag &&other)
 {
@@ -177,7 +181,7 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const tmap::TrapezoidalMap &trapezoid
 
             // Test if the point is equal to one endpoint
             if(nodeSegment.p2() == segment.p1() || nodeSegment.p2() == segment.p2() || nodeSegment.p1() == segment.p1() || nodeSegment.p1() == segment.p2()){
-                // Check to see if the new segment is under or over the y-node (we can't use findPointSide because one point is equal)
+                // Check to see if the new segment is under or over the y-node
                 if (tmap::findPointSide(nodeSegment, tmap::differentPoint(segment, nodeSegment))){
                     return findPoint(node->getLeftChild(), trapezoidalMap, segment);
                 } else {
@@ -204,17 +208,17 @@ dag::Leaf *dag::Dag::findPoint(Node *node, const tmap::TrapezoidalMap &trapezoid
 
 /**
  * @brief Update the children of a #Node
- * @param[in] oldChildren: the children to substitute
- * @param[in] newChildren: the substitute
+ * @param[in] oldChild: the child to substitute
+ * @param[in] newChild: the substitute
  */
-void dag::Dag::updateChildren(dag::Node* oldChildren, dag::Node* newChildren){
-    for (const auto& father: oldChildren->getFathers()){
-        if (father->getLeftChild() != nullptr && father->getLeftChild() == oldChildren){
+void dag::Dag::updateChildren(dag::Node* oldChild, dag::Node* newChild){
+    for (const auto& father: oldChild->getFathers()){
+        if (father->getLeftChild() != nullptr && father->getLeftChild() == oldChild){
             // The oldChildren is a left child
-            father->setLeftChild(newChildren);
+            father->setLeftChild(newChild);
         } else if(father->getRightChild() != nullptr) {
             // The oldChildren is a right child
-            father->setRightChild(newChildren);
+            father->setRightChild(newChild);
         }
     }
 }

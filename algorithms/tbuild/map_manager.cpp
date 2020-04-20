@@ -60,7 +60,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
             tbuild::multiTrapezoidIntersectedMiddle(trapezoidalMap, dag, segmentId, *it, oldUpper, oldLower);
         }
 
-        // Right endpoint
+        // Second endpoint
         tbuild::multiTrapezoidIntersectedLastEndpoint(trapezoidalMap, dag, segmentId, rightMostId, trapezoidSecondEndpoint, oldUpper, oldLower);
 
         // Remove first and last trapezoids
@@ -78,7 +78,12 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
  * @param rightMostId
  * @param trapezoid
  */
-void tbuild::oneTrapezoidIntersected(tmap::TrapezoidalMap &trapezoidalMap, dag::Dag &dag, const size_t &segmentId, const size_t &leftMostId, const size_t &rightMostId, tmap::Trapezoid * const &trapezoid){
+void tbuild::oneTrapezoidIntersected(tmap::TrapezoidalMap &trapezoidalMap,
+                                     dag::Dag &dag,
+                                     const size_t &segmentId,
+                                     const size_t &leftMostId,
+                                     const size_t &rightMostId,
+                                     tmap::Trapezoid * const &trapezoid){
     /* -----  TrapezoidalMap building  -----  */
     // 4 new trapezoids for the segment
     tmap::Trapezoid *A = new tmap::Trapezoid(trapezoid->getTop(),
@@ -125,7 +130,6 @@ void tbuild::oneTrapezoidIntersected(tmap::TrapezoidalMap &trapezoidalMap, dag::
                                     A,
                                     B,
                                     B);
-
 
     // Update left neighbors of trapezoid
     if (trapezoid->getLowerLeftTrapezoid() != nullptr){
@@ -197,40 +201,33 @@ void tbuild::oneTrapezoidIntersected(tmap::TrapezoidalMap &trapezoidalMap, dag::
     dag::YNode *si = new dag::YNode(segmentId);
 
     // Create leaves with trapezoids
-
-    dag::Leaf *Al = nullptr;
-    Al = new dag::Leaf(A);
-    Al->getFathers().insert(pi);
-
-    dag::Leaf *Bl = nullptr;
-    Bl = new dag::Leaf(B);
-
-    Bl->getFathers().insert(qi);
-
+    dag::Leaf *Al = new dag::Leaf(A);
+    dag::Leaf *Bl = new dag::Leaf(B);
     dag::Leaf *Cl = new dag::Leaf(C);
-    Cl->getFathers().insert(si);
-
     dag::Leaf *Dl = new dag::Leaf(D);
+
+    Al->getFathers().insert(pi);
+    Bl->getFathers().insert(qi);
+    Cl->getFathers().insert(si);
     Dl->getFathers().insert(si);
 
     // Find node on the DAG
-    dag::Node *foundNode = trapezoid->getLeaf();
+    dag::Node *deleteLeaf = trapezoid->getLeaf();
 
-    if (foundNode->getFathers().size() == 0){
-        // The foundNode is the root and it's substituted with si
+    if (deleteLeaf->getFathers().size() == 0){
+        // If the leaf has 0 fathers, it's the root and we should substitute it
         dag.setRoot(pi);
     }else {
-        // Update the children of the father of foundNode
-        dag.updateChildren(foundNode, pi);
+        // Otherwise we simple update the children of the father of deleteLeaf
+        dag.updateChildren(deleteLeaf, pi);
     }
 
     pi->setLeftChild(Al);
     pi->setRightChild(qi);
-    pi->getFathers() = foundNode->getFathers();
+    pi->getFathers() = deleteLeaf->getFathers();
 
     qi->setLeftChild(si);
     qi->setRightChild(Bl);
-
     qi->getFathers().insert(pi);
 
     si->setLeftChild(Cl);
@@ -244,8 +241,8 @@ void tbuild::oneTrapezoidIntersected(tmap::TrapezoidalMap &trapezoidalMap, dag::
     D->setLeaf(Dl);
 
     trapezoidalMap.removeTrapezoid(trapezoid);
-    dag.deleteNode(foundNode);
-    foundNode = nullptr;
+    dag.deleteNode(deleteLeaf);
+    deleteLeaf = nullptr;
 }
 
 /**
@@ -258,7 +255,13 @@ void tbuild::oneTrapezoidIntersected(tmap::TrapezoidalMap &trapezoidalMap, dag::
  * @param[out] oldUpper: the old upper trapezoid (B), needed to merge the upper trapezoids
  * @param[out] oldLower: the old lower trapezoid (C), needed to merge the lower trapezoids
  */
-void tbuild::multiTrapezoidIntersectedFirstEndpoint(tmap::TrapezoidalMap &trapezoidalMap, dag::Dag &dag, const size_t &segmentId, const size_t &leftMostId, const tmap::Trapezoid* const &trapezoidFirstEndpoint, tmap::Trapezoid* &oldUpper, tmap::Trapezoid* &oldLower) {
+void tbuild::multiTrapezoidIntersectedFirstEndpoint(tmap::TrapezoidalMap &trapezoidalMap,
+                                                    dag::Dag &dag,
+                                                    const size_t &segmentId,
+                                                    const size_t &leftMostId,
+                                                    const tmap::Trapezoid* const &trapezoidFirstEndpoint,
+                                                    tmap::Trapezoid* &oldUpper,
+                                                    tmap::Trapezoid* &oldLower) {
     /* -----  Left endpoint  -----  */
     // 3 new trapezoids for the left endpoint of the segment
     // Left trapezoid
@@ -341,17 +344,19 @@ void tbuild::multiTrapezoidIntersectedFirstEndpoint(tmap::TrapezoidalMap &trapez
     trapezoidalMap.addTrapezoid(C);
 
     // DAG nodes building for left endpoint
-    dag::XNode *xNode1 = new dag::XNode(leftMostId);
-    dag::YNode *yNode1 = new dag::YNode(segmentId);
+    dag::XNode *xNode = new dag::XNode(leftMostId);
+    dag::YNode *yNode = new dag::YNode(segmentId);
+
+    // Create leaves with trapezoids
     dag::Leaf *Al = new dag::Leaf(A);
     dag::Leaf *Bl = new dag::Leaf(B);
     dag::Leaf *Cl = new dag::Leaf(C);
 
-    xNode1->setLeftChild(Al);
-    xNode1->setRightChild(yNode1);
+    xNode->setLeftChild(Al);
+    xNode->setRightChild(yNode);
 
-    yNode1->setLeftChild(Bl);
-    yNode1->setRightChild(Cl);
+    yNode->setLeftChild(Bl);
+    yNode->setRightChild(Cl);
 
     A->setLeaf(Al);
     B->setLeaf(Bl);
@@ -360,15 +365,15 @@ void tbuild::multiTrapezoidIntersectedFirstEndpoint(tmap::TrapezoidalMap &trapez
     // Find the node in the DAG and replace it with the new xNode
     dag::Leaf *deleteLeaf = trapezoidFirstEndpoint->getLeaf();
 
-    dag.updateChildren(deleteLeaf, xNode1);
+    dag.updateChildren(deleteLeaf, xNode);
 
 
-    xNode1->getFathers() = deleteLeaf->getFathers();
-    yNode1->getFathers().insert(xNode1);
+    xNode->getFathers() = deleteLeaf->getFathers();
+    yNode->getFathers().insert(xNode);
 
-    Al->getFathers().insert(xNode1);
-    Bl->getFathers().insert(yNode1);
-    Cl->getFathers().insert(yNode1);
+    Al->getFathers().insert(xNode);
+    Bl->getFathers().insert(yNode);
+    Cl->getFathers().insert(yNode);
 
     dag.deleteNode(deleteLeaf);
     deleteLeaf = nullptr;
@@ -386,7 +391,11 @@ void tbuild::multiTrapezoidIntersectedFirstEndpoint(tmap::TrapezoidalMap &trapez
  * @param oldUpper
  * @param oldLower
  */
-void tbuild::multiTrapezoidIntersectedMiddle(tmap::TrapezoidalMap &trapezoidalMap, dag::Dag &dag, const size_t &segmentId, tmap::Trapezoid* const &currentTrapezoid, tmap::Trapezoid* &oldUpper, tmap::Trapezoid* &oldLower) {
+void tbuild::multiTrapezoidIntersectedMiddle(tmap::TrapezoidalMap &trapezoidalMap,
+                                             dag::Dag &dag, const size_t &segmentId,
+                                             tmap::Trapezoid* const &currentTrapezoid,
+                                             tmap::Trapezoid* &oldUpper,
+                                             tmap::Trapezoid* &oldLower) {
     /* -----  Middle of the segment  -----  */
     // Trapezoid in the middle of the segment from tl(1+1) to tl(n-1)
     tmap::Trapezoid *A, *B;
@@ -505,21 +514,21 @@ void tbuild::multiTrapezoidIntersectedMiddle(tmap::TrapezoidalMap &trapezoidalMa
     yNode3->setRightChild(Bl);
     yNode3->setLeftChild(Al);
 
-    dag::Node *deleteLeaf2 = currentTrapezoid->getLeaf();
+    dag::Node *deleteLeaf = currentTrapezoid->getLeaf();
 
-    assert(deleteLeaf2 != nullptr);
+    assert(deleteLeaf != nullptr);
 
-    dag.updateChildren(deleteLeaf2, yNode3);
+    dag.updateChildren(deleteLeaf, yNode3);
 
-    yNode3->getFathers() = deleteLeaf2->getFathers();
+    yNode3->getFathers() = deleteLeaf->getFathers();
     Al->getFathers().insert(yNode3);
     Bl->getFathers().insert(yNode3);
 
     A->setLeaf(Al);
     B->setLeaf(Bl);
 
-    dag.deleteNode(deleteLeaf2);
-    deleteLeaf2 = nullptr;
+    dag.deleteNode(deleteLeaf);
+    deleteLeaf = nullptr;
 
     trapezoidalMap.removeTrapezoid(currentTrapezoid);
 }
@@ -534,7 +543,12 @@ void tbuild::multiTrapezoidIntersectedMiddle(tmap::TrapezoidalMap &trapezoidalMa
  * @param oldUpper
  * @param oldLower
  */
-void tbuild::multiTrapezoidIntersectedLastEndpoint(tmap::TrapezoidalMap &trapezoidalMap, dag::Dag &dag, const size_t &segmentId, const size_t &rightMostId, const tmap::Trapezoid* const &trapezoidSecondEndpoint, tmap::Trapezoid* &oldUpper, tmap::Trapezoid* &oldLower) {
+void tbuild::multiTrapezoidIntersectedLastEndpoint(tmap::TrapezoidalMap &trapezoidalMap,
+                                                   dag::Dag &dag, const size_t &segmentId,
+                                                   const size_t &rightMostId,
+                                                   const tmap::Trapezoid* const &trapezoidSecondEndpoint,
+                                                   tmap::Trapezoid* &oldUpper,
+                                                   tmap::Trapezoid* &oldLower) {
     /* -----  Right endpoint  -----  */
     // 3 new trapezoids for the right endpoint of the segment
     // Top trapezoid
@@ -717,14 +731,14 @@ void tbuild::multiTrapezoidIntersectedLastEndpoint(tmap::TrapezoidalMap &trapezo
     yNode2->setLeftChild(A2l);
 
     // Find the node in the DAG and replace it with the new xNode
-    dag::Node *deleteLeaf3 = trapezoidSecondEndpoint->getLeaf();
+    dag::Node *deleteLeaf = trapezoidSecondEndpoint->getLeaf();
 
-    assert(deleteLeaf3 != nullptr);
+    assert(deleteLeaf != nullptr);
 
-    // Find where deleteLeaf3 is a child and substitute it
-    dag.updateChildren(deleteLeaf3, xNode2);
+    // Find where deleteLeaf is a child and substitute it
+    dag.updateChildren(deleteLeaf, xNode2);
 
-    xNode2->getFathers() = deleteLeaf3->getFathers();
+    xNode2->getFathers() = deleteLeaf->getFathers();
     yNode2->getFathers().insert(xNode2);
 
     A2l->getFathers().insert(yNode2);
@@ -735,8 +749,8 @@ void tbuild::multiTrapezoidIntersectedLastEndpoint(tmap::TrapezoidalMap &trapezo
     B2->setLeaf(B2l);
     C2->setLeaf(C2l);
 
-    dag.deleteNode(deleteLeaf3);
-    deleteLeaf3 = nullptr;
+    dag.deleteNode(deleteLeaf);
+    deleteLeaf = nullptr;
 }
 
 /**

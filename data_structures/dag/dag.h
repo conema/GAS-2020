@@ -6,7 +6,6 @@
 #include <cg3/geometry/point2.h>
 #include <data_structures/tmap/trapezoid.h>
 #include <data_structures/tmap/trapezoidalmap.h>
-#include <algorithms/trapezoidalmap_helper.h>
 #include "node.h"
 #include "leaf.h"
 #include "x_node.h"
@@ -22,7 +21,7 @@ namespace dag
         Dag(Leaf *node);
         Dag(Node *node);
         Dag(const Dag& dag);
-        //Dag& operator = (Dag other);
+        Dag& operator = (Dag other);
         Dag& operator = (Dag&& other);
         Dag(Dag&& in);
         ~Dag();
@@ -45,7 +44,7 @@ namespace dag
         void deleteGraph(Node *node);
         void deleteNode(Node *node);
 
-        void updateChildren(Node* oldChildren, Node* newChildren);
+        void updateChildren(Node* oldChild, Node* newChild);
     private:
         Node *root;
     };

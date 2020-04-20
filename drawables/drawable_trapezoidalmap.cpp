@@ -13,8 +13,6 @@ DrawableTrapezoidalMap::DrawableTrapezoidalMap(const int &boundingbox) :
  */
 void DrawableTrapezoidalMap::draw() const
 {
-    //assert(findIntersectionPoint(cg3::Segment2d(cg3::Point2d(2, 5), cg3::Point2d(8, 3)), cg3::Point2d(1, 2)).y() == -8);
-
     if (getTrapezoids().size() == 1)
         return;
 
@@ -27,7 +25,7 @@ void DrawableTrapezoidalMap::draw() const
         }
 
 
-        /* Controlli di debug */
+        /* Debug */
 #ifdef  QT_DEBUG
         if ((trapezoid->getUpperLeftTrapezoid() ==  nullptr && trapezoid->getLowerLeftTrapezoid() != nullptr) ||
                 (trapezoid->getUpperLeftTrapezoid() !=  nullptr && trapezoid->getLowerLeftTrapezoid() == nullptr) ||
@@ -71,7 +69,7 @@ void DrawableTrapezoidalMap::draw() const
             std::cerr<<trapezoid<<" "<<"problema con lower right"<<std::endl;
         }
 #endif
-        /* Fine controlli di debug */
+        /* End debug */
 
         const cg3::Segment2d top = getSegment(trapezoid->getTop());
         const cg3::Segment2d bottom = getSegment(trapezoid->getBottom());
