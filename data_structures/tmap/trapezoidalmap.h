@@ -16,8 +16,12 @@ namespace tmap
         typedef std::pair<size_t, size_t> IndexedSegment2d;
 
         TrapezoidalMap(const int &boundingbox);
-        //TrapezoidalMap(const TrapezoidalMap&) = delete;
-        //TrapezoidalMap& operator=(const TrapezoidalMap&) = delete;
+        TrapezoidalMap(TrapezoidalMap&& in);
+        TrapezoidalMap& operator = (TrapezoidalMap&& in);
+
+        TrapezoidalMap(const TrapezoidalMap& of);
+        TrapezoidalMap& operator=(TrapezoidalMap other);
+
         ~TrapezoidalMap();
 
         void initializeTrapezoids();
@@ -54,6 +58,7 @@ namespace tmap
 
         std::vector<cg3::Point2d> points;
         std::vector<IndexedSegment2d> indexedSegments;
+        void swap(TrapezoidalMap &other);
     };
 }
 

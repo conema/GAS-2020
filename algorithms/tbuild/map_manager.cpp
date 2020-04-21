@@ -55,6 +55,9 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
         // First endpoint
         tbuild::multiTrapezoidIntersectedFirstEndpoint(trapezoidalMap, dag, segmentId, leftMostId, trapezoidFirstEndpoint, oldUpper, oldLower);
 
+        // Remove first trapezoid
+        trapezoidalMap.removeTrapezoid(*tl.begin());
+
         // Middle trapezoids
         for (auto it = tl.begin()+1; it != tl.end()-1; ++it){
             tbuild::multiTrapezoidIntersectedMiddle(trapezoidalMap, dag, segmentId, *it, oldUpper, oldLower);
@@ -63,8 +66,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
         // Second endpoint
         tbuild::multiTrapezoidIntersectedLastEndpoint(trapezoidalMap, dag, segmentId, rightMostId, trapezoidSecondEndpoint, oldUpper, oldLower);
 
-        // Remove first and last trapezoids
-        trapezoidalMap.removeTrapezoid(*tl.begin());
+        // Remove last trapezoid
         trapezoidalMap.removeTrapezoid(tl.back());
     }
 }
@@ -392,7 +394,8 @@ void tbuild::multiTrapezoidIntersectedFirstEndpoint(tmap::TrapezoidalMap &trapez
  * @param oldLower
  */
 void tbuild::multiTrapezoidIntersectedMiddle(tmap::TrapezoidalMap &trapezoidalMap,
-                                             dag::Dag &dag, const size_t &segmentId,
+                                             dag::Dag &dag,
+                                             const size_t &segmentId,
                                              tmap::Trapezoid* const &currentTrapezoid,
                                              tmap::Trapezoid* &oldUpper,
                                              tmap::Trapezoid* &oldLower) {

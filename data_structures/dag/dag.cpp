@@ -38,10 +38,10 @@ void dag::Dag::swap(dag::Dag &other)
 
 dag::Dag::Dag(const dag::Dag &dag)
 {
-    root = new Node(*(dag.root));
-
-    // Completare
+    root = createDag(dag.getRoot());
 }
+
+
 
 dag::Dag &dag::Dag::operator =(dag::Dag other)
 {
@@ -59,6 +59,50 @@ dag::Dag::Dag(dag::Dag &&in)
 {
     this->root = in.root;
     in.root = nullptr;
+}
+
+
+/**
+ * @brief Duplicate a DAG
+ * @param[in] *oldNode: pointer to the oldNode to be copied
+ * @return the pointer of the new node
+ */
+dag::Node* dag::Dag::createDag(dag::Node *oldNode){
+    dag::Node *node = nullptr;
+    dag::XNode *xNode = nullptr;
+    dag::YNode *yNode = nullptr;
+    dag::Leaf *leaf = nullptr;
+
+    // Find node type and create a node with the correct encapsulation
+    switch(oldNode->getNodeType()){
+        case NodeType::XNODE:
+            xNode = new dag::XNode(getXNode(oldNode)->getPointId());
+            node = xNode;
+            break;
+        case NodeType::YNODE:
+            yNode = new dag::YNode(getYNode(oldNode)->getSegmentId());
+            node = yNode;
+            break;
+        case NodeType::LEAF:
+            leaf = new dag::Leaf(getLeaf(oldNode)->getTrapezoid());
+            node = leaf;
+
+            // Return the leaf because it hasn't children
+            return node;
+    }
+
+    dag::Node *newLeftChild = createDag(oldNode->getLeftChild());
+    dag::Node *newRightChild = createDag(oldNode->getRightChild());
+
+    // Add the children to the new copied node
+    node->setLeftChild(newLeftChild);
+    node->setRightChild(newRightChild);
+
+    // Set the new copied node as father
+    newLeftChild->getFathers().insert(node);
+    newRightChild->getFathers().insert(node);
+
+    return node;
 }
 
 /**

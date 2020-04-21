@@ -27,6 +27,7 @@ namespace dag
         ~Dag();
 
         void initializeDag(Leaf *node);
+        Node* createDag(dag::Node *oldRoot);
 
         void swap(Dag& other);
 
