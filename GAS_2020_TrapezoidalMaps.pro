@@ -40,8 +40,8 @@ DISTFILES += \
     LICENSE
 
 SOURCES +=  \
-    algorithms/map_manager.cpp \
-    algorithms/trapezoidalmap_helper.cpp \
+    algorithms/tbuild/map_manager.cpp \
+    algorithms/tmap/trapezoidalmap_helper.cpp \
     data_structures/dag/dag.cpp \
     data_structures/dag/leaf.cpp \
     data_structures/dag/node.cpp \
@@ -61,8 +61,8 @@ FORMS += \
     managers/trapezoidalmapmanager.ui
 
 HEADERS += \
-    algorithms/map_manager.h \
-    algorithms/trapezoidalmap_helper.h \
+    algorithms/tbuild/map_manager.h \
+    algorithms/tmap/trapezoidalmap_helper.h \
     data_structures/dag/dag.h \
     data_structures/dag/leaf.h \
     data_structures/dag/node.h \

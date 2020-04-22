@@ -8,9 +8,41 @@ tmap::TrapezoidalMap::TrapezoidalMap(const int &boundingbox):
 
 }
 
+// Rule of five
+
+tmap::TrapezoidalMap::TrapezoidalMap(tmap::TrapezoidalMap &&in)
+{
+    this->trapezoids = in.trapezoids;
+    in.trapezoids.clear();
+}
+
+tmap::TrapezoidalMap &tmap::TrapezoidalMap::operator =(tmap::TrapezoidalMap &&in)
+{
+    std::swap(trapezoids, in.trapezoids);
+    return *this;
+}
+
+tmap::TrapezoidalMap::TrapezoidalMap(const tmap::TrapezoidalMap &of)
+{
+    for (const auto& trapezoid: of.getTrapezoids()) {
+        addTrapezoid(new tmap::Trapezoid(*trapezoid));
+    }
+}
+
+tmap::TrapezoidalMap &tmap::TrapezoidalMap::operator=(tmap::TrapezoidalMap other)
+{
+    swap(other);
+    return*this;
+}
+
 tmap::TrapezoidalMap::~TrapezoidalMap()
 {
     removeTrapezoids();
+}
+
+void tmap::TrapezoidalMap::swap(TrapezoidalMap& other){
+    using std::swap;
+    swap(trapezoids, other.trapezoids);
 }
 
 /**

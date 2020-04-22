@@ -6,6 +6,22 @@ tmap::Trapezoid::Trapezoid()
 
 }
 
+
+tmap::Trapezoid::Trapezoid(Trapezoid const &trapezoid):
+    top(trapezoid.getTop()),
+    bottom(trapezoid.getBottom()),
+    rightp(trapezoid.getRightp()),
+    leftp(trapezoid.getLeftp()),
+    color(trapezoid.getColor()),
+    leaf(trapezoid.getLeaf()),
+    upperRightTrapezoid(trapezoid.getUpperRightTrapezoid()),
+    upperLeftTrapezoid(trapezoid.getUpperLeftTrapezoid()),
+    lowerRightTrapezoid(trapezoid.getLowerRightTrapezoid()),
+    lowerLeftTrapezoid(trapezoid.getLowerLeftTrapezoid())
+{
+
+}
+
 tmap::Trapezoid::Trapezoid(const size_t top,
                          const size_t bottom,
                          const size_t rightp,

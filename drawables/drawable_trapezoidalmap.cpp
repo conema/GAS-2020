@@ -13,8 +13,6 @@ DrawableTrapezoidalMap::DrawableTrapezoidalMap(const int &boundingbox) :
  */
 void DrawableTrapezoidalMap::draw() const
 {
-    //assert(findIntersectionPoint(cg3::Segment2d(cg3::Point2d(2, 5), cg3::Point2d(8, 3)), cg3::Point2d(1, 2)).y() == -8);
-
     if (getTrapezoids().size() == 1)
         return;
 
@@ -27,7 +25,7 @@ void DrawableTrapezoidalMap::draw() const
         }
 
 
-        /* Controlli di debug */
+        /* Debug */
 #ifdef  QT_DEBUG
         if ((trapezoid->getUpperLeftTrapezoid() ==  nullptr && trapezoid->getLowerLeftTrapezoid() != nullptr) ||
                 (trapezoid->getUpperLeftTrapezoid() !=  nullptr && trapezoid->getLowerLeftTrapezoid() == nullptr) ||
@@ -71,7 +69,7 @@ void DrawableTrapezoidalMap::draw() const
             std::cerr<<trapezoid<<" "<<"problema con lower right"<<std::endl;
         }
 #endif
-        /* Fine controlli di debug */
+        /* End debug */
 
         const cg3::Segment2d top = getSegment(trapezoid->getTop());
         const cg3::Segment2d bottom = getSegment(trapezoid->getBottom());
@@ -84,18 +82,20 @@ void DrawableTrapezoidalMap::draw() const
         cg3::Point2d topRightIntersection = tmap::findIntersectionPoint(top, rightp);
         cg3::Point2d topLeftIntersection = tmap::findIntersectionPoint(top, leftp);
 
+        // Draw only not degenere trapezoids
+        if(trapezoid->getLeftp() != trapezoid->getRightp()){
+            // Draw trapezoid area
+            glBegin(GL_POLYGON);
+              glVertex2d(bottomLeftIntersection.x(), bottomLeftIntersection.y());
+              glVertex2d(bottomRightIntersection.x(), bottomRightIntersection.y());
+              glVertex2d(topRightIntersection.x(), topRightIntersection.y());
+              glVertex2d(topLeftIntersection.x(), topLeftIntersection.y());
+            glEnd();
 
-        // Draw trapezoid area
-        glBegin(GL_POLYGON);
-          glVertex2d(bottomLeftIntersection.x(), bottomLeftIntersection.y());
-          glVertex2d(bottomRightIntersection.x(), bottomRightIntersection.y());
-          glVertex2d(topRightIntersection.x(), topRightIntersection.y());
-          glVertex2d(topLeftIntersection.x(), topLeftIntersection.y());
-        glEnd();
-
-        // Draw trapezoid boundary (lines)
-        cg3::opengl::drawLine2(topLeftIntersection, bottomLeftIntersection, cg3::Color(255, 0, 0), 3);
-        cg3::opengl::drawLine2(topRightIntersection, bottomRightIntersection, cg3::Color(255, 0, 0), 3);
+            // Draw trapezoid boundary (lines)
+            cg3::opengl::drawLine2(topLeftIntersection, bottomLeftIntersection, cg3::Color(255, 0, 0), 3);
+            cg3::opengl::drawLine2(topRightIntersection, bottomRightIntersection, cg3::Color(255, 0, 0), 3);
+        }
     }
 }
 

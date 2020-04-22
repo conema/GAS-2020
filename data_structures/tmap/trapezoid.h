@@ -5,7 +5,7 @@
 #include <cg3/geometry/segment2.h>
 #include <cg3/utilities/color.h>
 #include <data_structures/dag/leaf.h>
-#include <algorithms/trapezoidalmap_helper.h>
+#include <algorithms/tmap/trapezoidalmap_helper.h>
 
 /**
  * @brief This class represent a trapezoid
@@ -17,6 +17,7 @@ namespace tmap
     {
     public:
         Trapezoid();
+        Trapezoid(Trapezoid const &trapezoid);
         Trapezoid(const size_t top,
                   const size_t bottom,
                   const size_t rightp,
