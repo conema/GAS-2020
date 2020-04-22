@@ -5,7 +5,7 @@
 
 #include <cg3/viewer/interfaces/drawable_object.h>
 
-#include <algorithms/tmap/trapezoidalmap_helper.h>
+#include <utils/tmaputils/tmaputils.h>
 
 #ifdef __APPLE_CC__
 #include <GLUT/glut.h>

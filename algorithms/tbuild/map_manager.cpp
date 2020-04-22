@@ -25,7 +25,7 @@ void tbuild::buildMap(const cg3::Segment2d &segment, tmap::TrapezoidalMap &trape
     cg3::Point2d rightMost = segment.p2();
 
     // Re-order the segment points, p1 leftmost and p2 rightmost
-    tmap::orderPoint(leftMost, rightMost);
+    tmaputils::orderPoint(leftMost, rightMost);
 
     bool success;
 
@@ -632,7 +632,7 @@ void tbuild::multiTrapezoidIntersectedLastEndpoint(tmap::TrapezoidalMap &trapezo
         }
 
         // p1 of bottom is >= of p1 of top
-        if (tmap::leftMostPoint(trapezoidalMap.getSegment(B2->getBottom())).x() >= tmap::leftMostPoint(trapezoidalMap.getSegment(B2->getTop())).x()){
+        if (tmaputils::leftMostPoint(trapezoidalMap.getSegment(B2->getBottom())).x() >= tmaputils::leftMostPoint(trapezoidalMap.getSegment(B2->getTop())).x()){
             // The old trapezoid has A2 has only parent
             oldUpper->setUpperRightTrapezoid(A2);
             A2->setUpperLeftTrapezoid(trapezoidSecondEndpoint->getUpperLeftTrapezoid());
@@ -774,7 +774,7 @@ std::vector<tmap::Trapezoid*> tbuild::followSegment(const dag::Dag &dag,
     cg3::Point2d rightMost = segment.p2();
 
     // Re-order the segment points, p1 leftmost and p2 rightmost
-    tmap::orderPoint(leftMost, rightMost);
+    tmaputils::orderPoint(leftMost, rightMost);
 
     // Get trapezoid from DAG
     dag::Leaf *l = dag.findPoint(dag.getRoot(), trapezoidalMap, cg3::Segment2d(leftMost, rightMost));
@@ -786,7 +786,7 @@ std::vector<tmap::Trapezoid*> tbuild::followSegment(const dag::Dag &dag,
     while (rightMost.x() > trapezoidalMap.getPoint(trapezoidList[j]->getRightp()).x()) {
 
         // If rightp lies above the segment
-        if (tmap::findPointSide(segment, trapezoidalMap.getPoint(trapezoidList[j]->getRightp()))){
+        if (tmaputils::findPointSide(segment, trapezoidalMap.getPoint(trapezoidList[j]->getRightp()))){
             trapezoidList.push_back(trapezoidList[j]->getLowerRightTrapezoid());
         } else {
             trapezoidList.push_back(trapezoidList[j]->getUpperRightTrapezoid());

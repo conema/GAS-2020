@@ -5,7 +5,7 @@
 #include <cg3/geometry/segment2.h>
 #include <cg3/utilities/color.h>
 #include <data_structures/dag/leaf.h>
-#include <algorithms/tmap/trapezoidalmap_helper.h>
+#include <utils/tmaputils/tmaputils.h>
 
 /**
  * @brief This class represent a trapezoid

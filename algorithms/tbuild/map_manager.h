@@ -2,7 +2,7 @@
 #define MAP_MANAGER_H
 
 #include <data_structures/tmap/trapezoidalmap.h>
-#include <algorithms/tmap/trapezoidalmap_helper.h>
+#include <utils/tmaputils/tmaputils.h>
 #include <data_structures/dag/dag.h>
 #include <data_structures/dag/node.h>
 #include <data_structures/dag/x_node.h>

@@ -41,7 +41,6 @@ DISTFILES += \
 
 SOURCES +=  \
     algorithms/tbuild/map_manager.cpp \
-    algorithms/tmap/trapezoidalmap_helper.cpp \
     data_structures/dag/dag.cpp \
     data_structures/dag/leaf.cpp \
     data_structures/dag/node.cpp \
@@ -55,14 +54,14 @@ SOURCES +=  \
     drawables/drawable_trapezoidalmap_dataset.cpp \
     main.cpp \
     managers/trapezoidalmap_manager.cpp \
-    utils/fileutils.cpp
+    utils/fileutils.cpp \
+    utils/tmaputils/tmaputils.cpp
 
 FORMS += \
     managers/trapezoidalmapmanager.ui
 
 HEADERS += \
     algorithms/tbuild/map_manager.h \
-    algorithms/tmap/trapezoidalmap_helper.h \
     data_structures/dag/dag.h \
     data_structures/dag/leaf.h \
     data_structures/dag/node.h \
@@ -75,7 +74,8 @@ HEADERS += \
     drawables/drawable_trapezoidalmap.h \
     drawables/drawable_trapezoidalmap_dataset.h \
     managers/trapezoidalmap_manager.h \
-    utils/fileutils.h
+    utils/fileutils.h \
+    utils/tmaputils/tmaputils.h
 
 
 

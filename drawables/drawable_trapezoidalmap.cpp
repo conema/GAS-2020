@@ -77,10 +77,10 @@ void DrawableTrapezoidalMap::draw() const
         const cg3::Point2d leftp = getPoint(trapezoid->getLeftp());
         const cg3::Point2d rightp = getPoint(trapezoid->getRightp());
 
-        cg3::Point2d bottomLeftIntersection = tmap::findIntersectionPoint(bottom, leftp);
-        cg3::Point2d bottomRightIntersection = tmap::findIntersectionPoint(bottom, rightp);
-        cg3::Point2d topRightIntersection = tmap::findIntersectionPoint(top, rightp);
-        cg3::Point2d topLeftIntersection = tmap::findIntersectionPoint(top, leftp);
+        cg3::Point2d bottomLeftIntersection = tmaputils::findIntersectionPoint(bottom, leftp);
+        cg3::Point2d bottomRightIntersection = tmaputils::findIntersectionPoint(bottom, rightp);
+        cg3::Point2d topRightIntersection = tmaputils::findIntersectionPoint(top, rightp);
+        cg3::Point2d topLeftIntersection = tmaputils::findIntersectionPoint(top, leftp);
 
         // Draw only not degenere trapezoids
         if(trapezoid->getLeftp() != trapezoid->getRightp()){

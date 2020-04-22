@@ -5,7 +5,7 @@
 #include <cg3/geometry/point2.h>
 #include <cg3/utilities/color.h>
 
-namespace tmap{
+namespace tmaputils{
     class Trapezoid;
 
     cg3::Point2d findIntersectionPoint(const cg3::Segment2d &s, const cg3::Point2d &p);
