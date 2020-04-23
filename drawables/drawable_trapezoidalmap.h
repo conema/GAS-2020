@@ -7,12 +7,6 @@
 
 #include <utils/tmaputils/tmaputils.h>
 
-#ifdef __APPLE_CC__
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
 class DrawableTrapezoidalMap : public tmap::TrapezoidalMap, public cg3::DrawableObject
 {
 public:
