@@ -9,7 +9,6 @@ tmap::TrapezoidalMap::TrapezoidalMap(const int &boundingbox):
 }
 
 // Rule of five
-
 tmap::TrapezoidalMap::TrapezoidalMap(tmap::TrapezoidalMap &&in)
 {
     this->trapezoids = in.trapezoids;
@@ -22,10 +21,65 @@ tmap::TrapezoidalMap &tmap::TrapezoidalMap::operator =(tmap::TrapezoidalMap &&in
     return *this;
 }
 
+/**
+ * @brief Duplicate a trapezoidal map by using a map with the old pointer of the trapezoid and the new pointer
+ */
 tmap::TrapezoidalMap::TrapezoidalMap(const tmap::TrapezoidalMap &of)
 {
-    for (const auto& trapezoid: of.getTrapezoids()) {
-        addTrapezoid(new tmap::Trapezoid(*trapezoid));
+    std::unordered_map<Trapezoid*, Trapezoid*> newTrapezoids;
+    Trapezoid* newTrapezoid = nullptr;
+    std::vector<Trapezoid*> neighbors;
+    Trapezoid* neighbor = nullptr;
+    Trapezoid* newNeighbor = nullptr;
+
+    for (Trapezoid* trapezoid: of.getTrapezoids()) {
+
+        // If the trapezoid is present in the newTrapezoids map, we don't need to recreate it
+        if (newTrapezoids.find(trapezoid) == newTrapezoids.end()){
+            newTrapezoid = new tmap::Trapezoid(*trapezoid);
+            addTrapezoid(newTrapezoid);
+            newTrapezoids.insert(std::make_pair(trapezoid, newTrapezoid));
+        } else {
+            newTrapezoid = newTrapezoids.find(trapezoid)->second;
+        }
+
+        neighbors.push_back(trapezoid->getLowerLeftTrapezoid());
+        neighbors.push_back(trapezoid->getUpperLeftTrapezoid());
+        neighbors.push_back(trapezoid->getUpperRightTrapezoid());
+        neighbors.push_back(trapezoid->getLowerRightTrapezoid());
+
+        // Neighbors
+        for(int i = 0; i <= 3; i++){
+            neighbor = neighbors.at(i);
+
+            std::unordered_map<Trapezoid*, Trapezoid*>::iterator searchTrapezoid = newTrapezoids.find(neighbor);
+            if (searchTrapezoid == newTrapezoids.end()){
+                newNeighbor = new tmap::Trapezoid(*neighbor);
+                addTrapezoid(newNeighbor);
+                newTrapezoids.insert(std::make_pair(trapezoid, newNeighbor));
+
+                if (i == 0){
+                    newTrapezoid->setLowerLeftTrapezoid(newNeighbor);
+                } else if(i == 1){
+                    newTrapezoid->setUpperLeftTrapezoid(newNeighbor);
+                } else if(i == 2){
+                    newTrapezoid->setUpperRightTrapezoid(newNeighbor);
+                } else if (i == 3) {
+                    newTrapezoid->setLowerRightTrapezoid(newNeighbor);
+                }
+            } else {
+                // The neighbors has already been re-created
+                if (i == 0){
+                    newTrapezoid->setLowerLeftTrapezoid(searchTrapezoid->second);
+                } else if(i == 1){
+                    newTrapezoid->setUpperLeftTrapezoid(searchTrapezoid->second);
+                } else if(i == 2){
+                    newTrapezoid->setUpperRightTrapezoid(searchTrapezoid->second);
+                } else if (i == 3) {
+                    newTrapezoid->setLowerRightTrapezoid(searchTrapezoid->second);
+                }
+            }
+        }
     }
 }
 

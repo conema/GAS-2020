@@ -41,8 +41,6 @@ dag::Dag::Dag(const dag::Dag &dag)
     root = createDag(dag.getRoot());
 }
 
-
-
 dag::Dag &dag::Dag::operator =(dag::Dag other)
 {
     swap(other);
