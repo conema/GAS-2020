@@ -56,10 +56,6 @@ private:
     unsigned int firstPointSelectedSize;
     bool isFirstPointSelected;
 	
-	
-
-    //---------------------------------------------------------------------
-    //Declare your attributes here
 
     DrawableTrapezoidalMap drawableTrapezoidalMap;
     dag::Dag dag;
@@ -68,7 +64,7 @@ private:
 
 
 
-    /* ----- Methods (YOU WILL HAVE TO EDIT THESE METHODS) ----- */
+    /* ----- Methods  ----- */
 
     void addSegmentToTrapezoidalMap(const cg3::Segment2d& segment);
     void queryTrapezoidalMap(const cg3::Point2d& point);
@@ -76,17 +72,11 @@ private:
 
 
 
-    //---------------------------------------------------------------------
-    //Declare your private methods here if you need some
-
-
-
-
     //#####################################################################
 
 
 
-    /* ----- Private utility methods (DO NOT WRITE CODE IN THESE METHODS) ----- */
+    /* ----- Private utility methods ----- */
 
     void loadSegmentsTrapezoidalMapAndMeasureTime(const std::vector<cg3::Segment2d>& segments);
     void addSegmentToTrapezoidalMapAndMeasureTime(const cg3::Segment2d& segment);
